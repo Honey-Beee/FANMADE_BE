@@ -1,6 +1,7 @@
-package com.unithon.user.service;
+package com.unithon.user.application;
 
 import com.unithon.config.JwtUtil;
+import com.unithon.user.converter.UserConverter;
 import com.unithon.user.domain.entity.User;
 import com.unithon.user.domain.repository.UserRepository;
 import com.unithon.user.dto.UserDTO;
@@ -11,8 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
-
+public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
@@ -40,6 +40,11 @@ public class UserService {
         }
 
         String jwt = jwtUtil.generateToken(user);
-        return new UserDTO.LoginResponse(user.getId(), jwt);
+        return UserConverter.toLoginResponse(user, jwt);
+
+       // return new UserDTO.LoginResponse(user.getId(), jwt);
     }
+
+
 }
+
