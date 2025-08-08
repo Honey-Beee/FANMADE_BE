@@ -1,5 +1,7 @@
 package com.unithon.user.controller;
 
+import com.unithon.global.common.BaseResponse;
+import com.unithon.global.error.code.status.SuccessStatus;
 import com.unithon.user.dto.UserDTO;
 import com.unithon.user.application.UserService;
 import lombok.RequiredArgsConstructor;
