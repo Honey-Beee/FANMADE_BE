@@ -34,4 +34,13 @@ public class UserDTO {
         public String accessToken;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyProfile {
+        private Long id;
+        private String email;
+    }
+
 }
