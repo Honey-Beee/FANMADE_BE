@@ -12,7 +12,7 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "your_jwt_secret"; // 보안적으로 환경변수 처리 추천
+    private final String SECRET_KEY = "myunithonsecretkeymyunithonsecretkey"; // 보안적으로 환경변수 처리 추천
     private final long EXPIRATION_MS = 86400000; // 1일
 
     public String generateToken(User user) {
@@ -31,7 +31,7 @@ public class JwtUtil {
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
-                .getSubject();
+                .get("email", String.class);
     }
 
     public boolean validateToken(String token) {

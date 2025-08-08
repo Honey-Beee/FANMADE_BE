@@ -22,4 +22,12 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    public void updateEmail(String email) {
+        this.email = email;
+    }
+
+    public void updatePassword(String hashedPassword) {
+        this.password = hashedPassword;
+    }
 }
