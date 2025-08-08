@@ -1,12 +1,10 @@
 package com.unithon.user.controller;
 
-import com.unithon.user.domain.repository.UserRepository;
+import com.unithon.global.common.BaseResponse;
+import com.unithon.global.error.code.status.SuccessStatus;
 import com.unithon.user.dto.UserDTO;
 import com.unithon.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,13 +15,14 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signUp(@RequestBody UserDTO.SignUpRequest request) {
+    public BaseResponse<String> signUp(@RequestBody UserDTO.SignUpRequest request) {
         userService.signUp(request.email, request.password);
-        return ResponseEntity.ok("회원가입 성공");
+        return BaseResponse.onSuccess(SuccessStatus.USER_SIGNUP_SUCCESS, null);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserDTO.LoginResponse> login(@RequestBody UserDTO.LoginRequest request) {
-        return ResponseEntity.ok(userService.login(request.email, request.password));
+    public BaseResponse<UserDTO.LoginResponse> login(@RequestBody UserDTO.LoginRequest request) {
+        UserDTO.LoginResponse response = userService.login(request.email, request.password);
+        return BaseResponse.onSuccess(SuccessStatus.USER_LOGIN_SUCCESS, response);
     }
 }
