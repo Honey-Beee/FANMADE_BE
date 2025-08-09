@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,6 +23,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/advertisements")
+@Slf4j
 public class AdvertisementController {
     private final AdvertisementService advertisementService;
 
@@ -32,6 +34,18 @@ public class AdvertisementController {
     public BaseResponse<List<AdvertisementDTO.AdStatusResponse>> getAllFundingAdvertisements() {
         List<AdvertisementDTO.AdStatusResponse> response = advertisementService.getFundingAdvertisements();
         return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_LIST_SUCCESS, response);
+    }
+
+    /**
+     * 광고 상세 페이지 정보 조회 (인증 불필요)
+     */
+    @GetMapping("/{advertisementId}")
+    public BaseResponse<AdvertisementDTO.AdvertisementDetailResponse> getAdvertisementDetail(
+            @PathVariable Long advertisementId
+    ) {
+        AdvertisementDTO.AdvertisementDetailResponse response = advertisementService.getAdvertisementDetail(advertisementId);
+        log.info("Controller log, response :: {}", response);
+        return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_DETAIL_SUCCESS, response);
     }
 
 

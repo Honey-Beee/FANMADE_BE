@@ -1,6 +1,7 @@
 package com.unithon.domain.advertisement.application;
 
 import com.unithon.domain.advertisement.converter.AdvertisementConverter;
+import com.unithon.domain.advertisement.domain.entity.Advertisement;
 import com.unithon.domain.advertisement.domain.entity.Status;
 import com.unithon.domain.advertisement.domain.repository.AdQueryResultInterface;
 import com.unithon.domain.advertisement.domain.repository.AdvertisementRepository;
@@ -29,5 +30,24 @@ public class AdvertisementServiceImpl implements AdvertisementService{
         return results.stream()
                 .map(AdvertisementConverter::convertToAdStatusDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public AdvertisementDTO.AdvertisementDetailResponse getAdvertisementDetail(Long advertisementId) {
+        // 광고 정보와 후원자 수를 조회
+        Object[] result = advertisementRepository.findAdvertisementWithDonorCountById(advertisementId)
+                .orElseThrow(() -> new RuntimeException("해당 광고를 찾을 수 없습니다. ID: " + advertisementId));
+
+        log.info("Service log, result :: {} {}", result, result[0]);
+
+        Object[] innerResult = (Object[]) result[0];
+        log.info("Service log, innerResult :: {} {}", innerResult);
+        Advertisement advertisement = (Advertisement) innerResult[0];
+        Long donorCount = (Long) innerResult[1];
+
+        log.info("Service log, 광고명, 도네카운트 :: {} {}", advertisement.getName(), donorCount);
+
+        return AdvertisementConverter.toAdvertisementDetailResponse(advertisement, donorCount);
+
     }
 }
