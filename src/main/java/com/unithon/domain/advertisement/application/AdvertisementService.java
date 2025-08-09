@@ -5,6 +5,7 @@ import com.unithon.domain.advertisement.dto.AdvertisementDTO;
 import java.util.List;
 
 public interface AdvertisementService {
-    List<AdvertisementDTO.AdStatusResponse> getFundingAdvertisements();
+    public AdvertisementDTO.MainResponse getAdvertisementsMain(
+            String status, String sort, int page, int size);
     AdvertisementDTO.AdvertisementDetailResponse getAdvertisementDetail(Long advertisementId);
 }
