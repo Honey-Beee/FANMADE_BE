@@ -89,20 +89,19 @@ public class AdvertisementServiceImpl implements AdvertisementService{
 
     @Override
     public AdvertisementDTO.AdvertisementDetailResponse getAdvertisementDetail(Long advertisementId) {
-        // 광고 정보와 후원자 수를 조회
+        // 1. Repository를 호출하여 [Advertisement, donorCount] 형태의 결과를 조회
         Object[] result = advertisementRepository.findAdvertisementWithDonorCountById(advertisementId)
                 .orElseThrow(() -> new RuntimeException("해당 광고를 찾을 수 없습니다. ID: " + advertisementId));
 
-        log.info("Service log, result :: {} {}", result, result[0]);
+        log.info("광고 디테일 페이지 result : {}, result[0] : {}", result, result[0]);
 
         Object[] innerResult = (Object[]) result[0];
-        log.info("Service log, innerResult :: {} {}", innerResult);
-        Advertisement advertisement = (Advertisement) innerResult[0];
-        Long donorCount = (Long) innerResult[1];
 
-        log.info("Service log, 광고명, 도네카운트 :: {} {}", advertisement.getName(), donorCount);
+        Advertisement advertisement = (Advertisement) innerResult[0]; // 내부 배열의 첫 번째 요소
+        Long donorCount = (Long) innerResult[1];           // 내부 배열의 두 번째 요소
 
+        // 3. Converter를 사용하여 최종 DTO로 변환 후 반환
         return AdvertisementConverter.toAdvertisementDetailResponse(advertisement, donorCount);
-
     }
+
 }

@@ -22,4 +22,7 @@ public class Artist extends BaseEntity {
 
     @Column(nullable = false)
     private String name;
+
+    private String imageUrl;
+
 }
