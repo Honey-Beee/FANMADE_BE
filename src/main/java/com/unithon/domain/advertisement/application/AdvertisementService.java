@@ -8,4 +8,7 @@ public interface AdvertisementService {
     public AdvertisementDTO.MainResponse getAdvertisementsMain(
             String status, String sort, int page, int size);
     AdvertisementDTO.AdvertisementDetailResponse getAdvertisementDetail(Long advertisementId);
+    Long createDraft(AdvertisementDTO.CreateDraftRequest req);
+    AdvertisementDTO.FundingInfoResponse setFunding(Long adId,
+                                                    AdvertisementDTO.FundingInfoRequest req);
 }

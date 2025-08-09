@@ -5,6 +5,7 @@ import com.unithon.domain.advertisement.domain.entity.MediaType;
 import com.unithon.domain.advertisement.domain.entity.Purpose;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class AdvertisementDTO {
@@ -116,6 +117,47 @@ public class AdvertisementDTO {
         private Long donorCount; // 후원자 수
         private Long remainingDays; // 남은 기간
         private int progressPercentage; // 달성률
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateDraftRequest {
+        private Long artistId;
+        private Purpose purpose;     // BIRTHDAY/DEBUT/COMEBACK/ETC
+        private String name;         // 프로젝트명(카드 타이틀)
+        private String description;           // 선택
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateDraftResponse {
+        private Long adId;
+        private String status; // "DRAFT"
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FundingInfoRequest {
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private Integer goalAmount;  // 최소 100000 권장
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FundingInfoResponse {
+        private Long adId;
+        private LocalDate startDate;
+        private LocalDate endDate;
+        private Integer goalAmount;
     }
 
 }

@@ -51,6 +51,27 @@ public class AdvertisementController {
         return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_DETAIL_SUCCESS, response);
     }
 
+    @PostMapping("/drafts")
+    public BaseResponse<AdvertisementDTO.CreateDraftResponse> createDraft(
+            @RequestBody AdvertisementDTO.CreateDraftRequest request
+    ) {
+        Long adId = advertisementService.createDraft(request);
+        AdvertisementDTO.CreateDraftResponse body =
+                AdvertisementDTO.CreateDraftResponse.builder()
+                        .adId(adId).status("DRAFT").build();
+        return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_DRAFT_CREATED, body);
+    }
+
+    @PatchMapping("/{advertisementId}/funding")
+    public BaseResponse<AdvertisementDTO.FundingInfoResponse> setFunding(
+            @PathVariable Long advertisementId,
+            @RequestBody AdvertisementDTO.FundingInfoRequest request
+    ) {
+        AdvertisementDTO.FundingInfoResponse res =
+                advertisementService.setFunding(advertisementId, request);
+        return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_FUNDING_SAVED, res);
+    }
+
 
 }
 

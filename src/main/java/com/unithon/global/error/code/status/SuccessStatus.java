@@ -18,14 +18,16 @@ public enum SuccessStatus implements BaseCode {
     USER_LOGIN_SUCCESS(HttpStatus.OK, "USER_2002", "로그인 성공"),
 
     // Advertisement
-    ADVERTISEMENT_LIST_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_3001", "현재 FUNDING중인 광고리스트 조회 성공"),
-    ADVERTISEMENT_DETAIL_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_3001", "광고 디테일 메인 페이지 조회 성공"),
+    ADVERTISEMENT_LIST_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_2001", "현재 FUNDING중인 광고리스트 조회 성공"),
+    ADVERTISEMENT_DETAIL_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_2002", "광고 디테일 메인 페이지 조회 성공"),
+    ADVERTISEMENT_DRAFT_CREATED(HttpStatus.CREATED, "ADVERTISEMENT_2003","드래프트가 생성되었습니다."),
+    ADVERTISEMENT_FUNDING_SAVED(HttpStatus.OK, "ADVERTISEMENT_2004","펀딩 정보가 저장되었습니다."),
 
     // Donation
-    DONATION_SUCCESS(HttpStatus.OK, "DONATION_4001", "후원 등록 성공"),
+    DONATION_SUCCESS(HttpStatus.OK, "DONATION_2001", "후원 등록 성공"),
 
     // Artist
-    ARTIST_SEARCH_SUCCESS(HttpStatus.OK, "ARTIST_5001", "아티스트 검색 성공")
+    ARTIST_SEARCH_SUCCESS(HttpStatus.OK, "ARTIST_2001", "아티스트 검색 성공")
 
     ;
 

@@ -7,6 +7,12 @@ import com.unithon.domain.advertisement.domain.repository.AdQueryResultInterface
 import com.unithon.domain.advertisement.domain.repository.AdvertisementRepository;
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
 import com.unithon.domain.donation.repository.DonationRepository;
+import com.unithon.domain.user.domain.entity.Artist;
+import com.unithon.domain.user.domain.entity.User;
+import com.unithon.domain.user.domain.repository.ArtistRepository;
+import com.unithon.domain.user.domain.repository.UserRepository;
+import com.unithon.global.error.code.status.ErrorStatus;
+import com.unithon.global.exception.GeneralException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +20,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +35,8 @@ import java.util.stream.Collectors;
 public class AdvertisementServiceImpl implements AdvertisementService{
     private final AdvertisementRepository advertisementRepository;
     private final EntityManager em;
+    private final UserRepository userRepository;
+    private final ArtistRepository artistRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -116,6 +127,54 @@ public class AdvertisementServiceImpl implements AdvertisementService{
 
         // 3. Converter를 사용하여 최종 DTO로 변환 후 반환
         return AdvertisementConverter.toAdvertisementDetailResponse(advertisement, donorCount);
+    }
+
+    @Override
+    @Transactional
+    public Long createDraft(AdvertisementDTO.CreateDraftRequest req) {
+        Long userId = currentUserId();
+        User user = userRepository.getReferenceById(userId);
+        Artist artist = artistRepository.getReferenceById(req.getArtistId());
+
+        Advertisement ad = AdvertisementConverter.toDraftEntity(artist, user, req);
+
+        return advertisementRepository.save(ad).getAdvertisementId();
+    }
+
+    @Override
+    @Transactional
+    public AdvertisementDTO.FundingInfoResponse setFunding(Long adId
+                                                           ,AdvertisementDTO.FundingInfoRequest req) {
+        Long userId = currentUserId();
+        Advertisement ad = advertisementRepository
+                .findByAdvertisementIdAndUser_Id(adId, userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
+
+        if (req.getGoalAmount() == null || req.getGoalAmount() < 100_000) {
+            throw new GeneralException(ErrorStatus.INVALID_FUNDING_GOAL);
+        }
+        if (req.getStartDate() == null || req.getEndDate() == null ||
+                !req.getEndDate().isAfter(req.getStartDate())) {
+            throw new GeneralException(ErrorStatus.INVALID_FUNDING_PERIOD);
+        }
+
+        ad.applyFunding(req.getStartDate(), req.getEndDate(), req.getGoalAmount());
+
+        return AdvertisementConverter.toFundingInfoResponse(ad);
+    }
+
+    public Long currentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) throw new RuntimeException("인증 필요");
+
+        Object principal = auth.getPrincipal();
+        String email = (principal instanceof UserDetails)
+                ? ((UserDetails) principal).getUsername()
+                : String.valueOf(principal);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자 없음: " + email));
+        return user.getId();
     }
 
 }

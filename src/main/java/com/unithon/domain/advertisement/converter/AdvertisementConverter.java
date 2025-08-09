@@ -2,6 +2,7 @@ package com.unithon.domain.advertisement.converter;
 
 import com.unithon.domain.advertisement.domain.entity.Advertisement;
 import com.unithon.domain.advertisement.domain.entity.MediaType;
+import com.unithon.domain.advertisement.domain.entity.Status;
 import com.unithon.domain.advertisement.domain.repository.AdQueryResultInterface;
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
 
@@ -12,6 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
+import com.unithon.domain.user.domain.entity.Artist;
+import com.unithon.domain.user.domain.entity.User;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
@@ -125,6 +128,29 @@ public class AdvertisementConverter {
                 .fundingStatus(fundingStatus)
                 .build();
     }
+
+    public static Advertisement toDraftEntity(Artist artist, User user, AdvertisementDTO.CreateDraftRequest req) {
+        return Advertisement.builder()
+                .artistId(artist)
+                .user(user)
+                .name(req.getName())
+                .description(req.getDescription())
+                .status(Status.DRAFT)   // 드래프트 상태
+                .purpose(req.getPurpose())
+                .currentAmount(0)
+                .goalAmount(0)
+                .build();
+    }
+
+    public static AdvertisementDTO.FundingInfoResponse toFundingInfoResponse(Advertisement ad) {
+        return AdvertisementDTO.FundingInfoResponse.builder()
+                .adId(ad.getAdvertisementId())
+                .startDate(ad.getStartDate())
+                .endDate(ad.getEndDate())
+                .goalAmount(ad.getGoalAmount())
+                .build();
+    }
+
 
 }
 
