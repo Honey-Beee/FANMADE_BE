@@ -22,7 +22,10 @@ public enum SuccessStatus implements BaseCode {
     ADVERTISEMENT_DETAIL_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_3001", "광고 디테일 메인 페이지 조회 성공"),
 
     // Donation
-    DONATION_SUCCESS(HttpStatus.OK, "DONATION_4001", "후원 등록 성공")
+    DONATION_SUCCESS(HttpStatus.OK, "DONATION_4001", "후원 등록 성공"),
+
+    // Artist
+    ARTIST_SEARCH_SUCCESS(HttpStatus.OK, "ARTIST_5001", "아티스트 검색 성공")
 
     ;
 

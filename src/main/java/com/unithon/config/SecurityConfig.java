@@ -40,6 +40,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/advertisements").permitAll() // 인증 필요없이, 현재 모집중인 광고 리스트 모두 조회
                         .requestMatchers(HttpMethod.GET, "/advertisements/{advertisementId}").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/artists/search").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
