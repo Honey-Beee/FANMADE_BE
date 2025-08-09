@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface AdvertisementService {
     List<AdvertisementDTO.AdStatusResponse> getFundingAdvertisements();
+    AdvertisementDTO.AdvertisementDetailResponse getAdvertisementDetail(Long advertisementId);
 }

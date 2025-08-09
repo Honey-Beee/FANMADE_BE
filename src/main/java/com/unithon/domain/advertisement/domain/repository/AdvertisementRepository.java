@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AdvertisementRepository extends JpaRepository<Advertisement, Long> {
     /**
@@ -34,4 +35,17 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
             "GROUP BY ad.advertisement_id, ar.name " +
             "ORDER BY ad.end_date ASC", nativeQuery = true)
     List<AdQueryResultInterface> findAllByStatusWithDetails(@Param("status") String status);
+
+    /**
+     * 광고 상세 정보와 해당 광고의 총 후원자 수를 한 번의 쿼리로 조회
+     * @param advertisementId 조회할 광고의 ID
+     * @return Advertisement 엔티티와 Long 타입의 후원자 수를 담은 Object 배열
+     */
+    @Query("SELECT ad, COUNT(d.id) " +
+            "FROM Advertisement ad " +
+            "LEFT JOIN ad.artistId " +
+            "LEFT JOIN Donation d ON d.advertisement = ad " +
+            "WHERE ad.advertisementId = :advertisementId " +
+            "GROUP BY ad.advertisementId")
+    Optional<Object[]> findAdvertisementWithDonorCountById(@Param("advertisementId") Long advertisementId);
 }

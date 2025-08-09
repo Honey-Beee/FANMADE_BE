@@ -26,4 +26,42 @@ public class AdvertisementDTO {
         private Long remainingDays; // 남은 일수
     }
 
+    /**
+     * 상세 페이지를 위한 DTO 구조
+     */
+
+    @Builder
+    @Getter
+    public static class AdvertisementDetailResponse {
+        private AdvertisementInfo advertisementInfo;
+        private FundingStatus fundingStatus;
+        private ProjectDetails projectDetails;
+    }
+
+    @Builder
+    @Getter
+    public static class AdvertisementInfo {
+        private Long advertisementId;
+        private String imageUrl;
+        private MediaType mediaType;
+        private String title;
+        private String artistName;
+    }
+
+    @Builder
+    @Getter
+    public static class FundingStatus {
+        private int currentAmount;
+        private int goalAmount;
+        private int progressPercentage; // 진행률 (계산된 값)
+        private Long donorCount;
+        private Long remainingDays; // 남은 기간 (계산된 값)
+    }
+
+    @Builder
+    @Getter
+    public static class ProjectDetails {
+        private String description;
+    }
+
 }
