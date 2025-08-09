@@ -3,6 +3,7 @@ package com.unithon.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -36,6 +37,8 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/swagger-ui/**", "/v3/api-docs/**"
                                 ).permitAll()  // 로그인, 회원가입은 허용
+
+                        .requestMatchers(HttpMethod.GET, "/advertisements").permitAll() // 인증 필요없이, 현재 모집중인 광고 리스트 모두 조회
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

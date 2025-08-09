@@ -18,7 +18,7 @@ public enum SuccessStatus implements BaseCode {
     USER_LOGIN_SUCCESS(HttpStatus.OK, "USER_2002", "로그인 성공"),
 
     // Advertisement
-    ADVERTISEMENT_MY_LIST_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_2001", "로그인한 사용자가 펀딩한 광고 현황 조회 성공")
+    ADVERTISEMENT_LIST_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_2001", "현재 FUNDING중인 광고리스트 조회 성공")
 
     ;
 
