@@ -1,5 +1,6 @@
 package com.unithon.domain.donation.domain;
 
+import com.unithon.domain.advertisement.domain.entity.Advertisement;
 import com.unithon.domain.model.BaseEntity;
 
 import com.unithon.domain.user.domain.entity.User;
@@ -26,9 +27,9 @@ public class Donation extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "advertisement_id", nullable = false)
-//    private Advertisement advertisement;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "advertisement_id", nullable = false)
+    private Advertisement advertisement;
 
     @Column(nullable = false)
     private Long amount;

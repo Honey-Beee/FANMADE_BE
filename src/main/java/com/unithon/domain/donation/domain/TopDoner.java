@@ -1,5 +1,6 @@
 package com.unithon.domain.donation.domain;
 
+import com.unithon.domain.advertisement.domain.entity.Advertisement;
 import com.unithon.domain.model.BaseEntity;
 import com.unithon.domain.user.domain.entity.User;
 import jakarta.persistence.*;
@@ -21,9 +22,9 @@ public class TopDoner extends BaseEntity{
     @Column(name = "top_doner_id")
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "advertisement_id")
-//    private Advertisement advertisement;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "advertisement_id")
+    private Advertisement advertisement;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
