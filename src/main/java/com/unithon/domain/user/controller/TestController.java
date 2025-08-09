@@ -1,7 +1,7 @@
-package com.unithon.user.controller;
+package com.unithon.domain.user.controller;
 
-import com.unithon.user.domain.repository.UserRepository;
-import com.unithon.user.dto.UserDTO;
+import com.unithon.domain.user.dto.UserDTO;
+import com.unithon.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

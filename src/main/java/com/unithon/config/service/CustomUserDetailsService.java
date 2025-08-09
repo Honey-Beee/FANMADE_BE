@@ -1,7 +1,7 @@
 package com.unithon.config.service;
 
-import com.unithon.user.domain.entity.User;
-import com.unithon.user.domain.repository.UserRepository;
+import com.unithon.domain.user.domain.entity.User;
+import com.unithon.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

@@ -1,6 +1,6 @@
-package com.unithon.user.domain.repository;
+package com.unithon.domain.user.domain.repository;
 
-import com.unithon.user.domain.entity.User;
+import com.unithon.domain.user.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

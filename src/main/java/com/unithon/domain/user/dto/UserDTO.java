@@ -1,4 +1,4 @@
-package com.unithon.user.dto;
+package com.unithon.domain.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
