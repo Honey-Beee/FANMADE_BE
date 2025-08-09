@@ -47,7 +47,7 @@ public class AdvertisementController {
             @PathVariable Long advertisementId
     ) {
         AdvertisementDTO.AdvertisementDetailResponse response = advertisementService.getAdvertisementDetail(advertisementId);
-        log.info("Controller log, response :: {}", response);
+
         return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_DETAIL_SUCCESS, response);
     }
 

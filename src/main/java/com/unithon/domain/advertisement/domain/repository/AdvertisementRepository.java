@@ -51,7 +51,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
      */
     @Query("SELECT ad, COUNT(d.id) " +
             "FROM Advertisement ad " +
-            "LEFT JOIN ad.artistId " +
+            "LEFT JOIN ad.artistId " + // Artist 정보를 즉시 함께 로딩하여 N+1 문제 방지
             "LEFT JOIN Donation d ON d.advertisement = ad " +
             "WHERE ad.advertisementId = :advertisementId " +
             "GROUP BY ad.advertisementId")

@@ -6,6 +6,7 @@ import com.unithon.domain.advertisement.domain.repository.AdQueryResultInterface
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,47 +69,60 @@ public class AdvertisementConverter {
                 .build();
     }
 
+    // 광고 상세 페이지 컨버터
     public static AdvertisementDTO.AdvertisementDetailResponse toAdvertisementDetailResponse(Advertisement ad, Long donorCount) {
 
-        // --- 계산 로직 수행 ---
-        // 1. 남은 기간 계산
+        // --- 데이터 가공 로직 ---
+        // 1. 상태(Status) Enum을 한글 문자열로 변환
+        String statusInKorean = switch (ad.getStatus()) {
+            case FUNDING -> "진행중";
+            case FUNDED -> "완료";
+            case CANCELED -> "취소";
+            default -> "기타";
+        };
+
+        // 2. 남은 기간 계산
         long remainingDays = ChronoUnit.DAYS.between(LocalDate.now(), ad.getEndDate());
-        if (remainingDays < 0) {
-            remainingDays = 0;
-        }
+        if (remainingDays < 0) remainingDays = 0;
 
-        // 2. 진행률 계산 (목표 금액이 0인 경우 대비)
-        int progressPercentage = 0;
-        if (ad.getGoalAmount() > 0) {
-            progressPercentage = (int) (((double) ad.getCurrentAmount() / ad.getGoalAmount()) * 100);
-        }
+        // 3. 진행률 계산 (목표 금액이 0인 경우 대비)
+        int progressPercentage = (ad.getGoalAmount() > 0) ?
+                (int) (((double) ad.getCurrentAmount() / ad.getGoalAmount()) * 100) : 0;
 
-        // --- DTO 그룹별 빌드 ---
+        // --- 그룹별 DTO 빌드 ---
         AdvertisementDTO.AdvertisementInfo adInfo = AdvertisementDTO.AdvertisementInfo.builder()
-                .advertisementId(ad.getAdvertisementId())
-                .imageUrl(ad.getImageUrl())
-                .mediaType(ad.getMediaType())
+                .coverImageUrl(ad.getImageUrl()) // 엔티티의 imageUrl을 커버이미지로 사용
+                .purpose(ad.getPurpose())
+                .status(statusInKorean)
+                .build();
+
+        AdvertisementDTO.ArtistInfo artistInfo = AdvertisementDTO.ArtistInfo.builder()
+                .artistId(ad.getArtistId().getId())
+                .name(ad.getArtistId().getName())
+                .profileImageUrl(ad.getArtistId().getImageUrl()) // Artist 엔티티에 imageUrl 필드가 있다고 가정
+                .build();
+
+        AdvertisementDTO.ProjectInfo projectInfo = AdvertisementDTO.ProjectInfo.builder()
                 .title(ad.getName())
-                .artistName(ad.getArtistId().getName())
+                .description(ad.getDescription())
+                .startDate(ad.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE)) // YYYY-MM-DD 형식
+                .endDate(ad.getEndDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
                 .build();
 
         AdvertisementDTO.FundingStatus fundingStatus = AdvertisementDTO.FundingStatus.builder()
                 .currentAmount(ad.getCurrentAmount())
                 .goalAmount(ad.getGoalAmount())
-                .progressPercentage(progressPercentage)
                 .donorCount(donorCount)
                 .remainingDays(remainingDays)
+                .progressPercentage(progressPercentage)
                 .build();
 
-        AdvertisementDTO.ProjectDetails projectDetails = AdvertisementDTO.ProjectDetails.builder()
-                .description(ad.getDescription())
-                .build();
-
-        // --- 최종 DTO 조립 및 반환 ---
+        // --- 최종 응답 DTO 조립 ---
         return AdvertisementDTO.AdvertisementDetailResponse.builder()
                 .advertisementInfo(adInfo)
+                .artistInfo(artistInfo)
+                .projectInfo(projectInfo)
                 .fundingStatus(fundingStatus)
-                .projectDetails(projectDetails)
                 .build();
     }
 

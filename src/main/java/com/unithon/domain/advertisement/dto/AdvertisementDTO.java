@@ -60,41 +60,62 @@ public class AdvertisementDTO {
     }
 
     /**
-     * 상세 페이지를 위한 DTO 구조
+     * [최종 응답] 상세 페이지 전체를 나타내는 DTO
      */
-
     @Builder
     @Getter
     public static class AdvertisementDetailResponse {
         private AdvertisementInfo advertisementInfo;
+        private ArtistInfo artistInfo;
+        private ProjectInfo projectInfo;
         private FundingStatus fundingStatus;
-        private ProjectDetails projectDetails;
     }
 
+    /**
+     * 상단 커버 이미지와 태그 정보를 담는 DTO
+     */
     @Builder
     @Getter
     public static class AdvertisementInfo {
-        private Long advertisementId;
-        private String imageUrl;
-        private MediaType mediaType;
-        private String title;
-        private String artistName;
+        private String coverImageUrl;
+        private Purpose purpose;
+        private String status; // "진행중", "완료" 등 한글 문자열을 담을 필드
     }
 
+    /**
+     * 아티스트 정보를 담는 DTO
+     */
+    @Builder
+    @Getter
+    public static class ArtistInfo {
+        private Long artistId;
+        private String name;
+        private String profileImageUrl;
+    }
+
+    /**
+     * 프로젝트 제목, 설명, 기간 등 텍스트 정보를 담는 DTO
+     */
+    @Builder
+    @Getter
+    public static class ProjectInfo {
+        private String title;
+        private String description;
+        private String startDate;
+        private String endDate;
+    }
+
+    /**
+     * 모금 현황 숫자 정보를 담는 DTO
+     */
     @Builder
     @Getter
     public static class FundingStatus {
-        private int currentAmount;
-        private int goalAmount;
-        private int progressPercentage; // 진행률 (계산된 값)
-        private Long donorCount;
-        private Long remainingDays; // 남은 기간 (계산된 값)
-    }
-
-    @Builder
-    @Getter
-    public static class ProjectDetails {
-        private String description;
+        private int currentAmount; // 모금된 금액
+        private int goalAmount; // 목표 금액
+        private Long donorCount; // 후원자 수
+        private Long remainingDays; // 남은 기간
+        private int progressPercentage; // 달성률
     }
 
 }
