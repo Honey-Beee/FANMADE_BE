@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -31,8 +28,14 @@ public class AdvertisementController {
      * 현재 펀딩 중인 모든 광고 리스트 조회 (인증 불필요)
      */
     @GetMapping
-    public BaseResponse<List<AdvertisementDTO.AdStatusResponse>> getAllFundingAdvertisements() {
-        List<AdvertisementDTO.AdStatusResponse> response = advertisementService.getFundingAdvertisements();
+    public BaseResponse<AdvertisementDTO.MainResponse> getAdvertisements(
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "latest") String sort,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size
+    ) {
+        AdvertisementDTO.MainResponse response =
+                advertisementService.getAdvertisementsMain(status, sort, page, size);
         return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_LIST_SUCCESS, response);
     }
 

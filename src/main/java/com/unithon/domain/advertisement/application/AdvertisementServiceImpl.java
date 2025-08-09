@@ -9,12 +9,13 @@ import com.unithon.domain.advertisement.dto.AdvertisementDTO;
 import com.unithon.domain.donation.repository.DonationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,12 +25,66 @@ public class AdvertisementServiceImpl implements AdvertisementService{
     private final AdvertisementRepository advertisementRepository;
 
     @Override
-    public List<AdvertisementDTO.AdStatusResponse> getFundingAdvertisements() {
-        List<AdQueryResultInterface> results = advertisementRepository.findAllByStatusWithDetails("FUNDING");
+    public AdvertisementDTO.MainResponse getAdvertisementsMain(String statusStr, String sortStr, int page, int size) {
+        // --- 1. 요약 정보 조회 ---
+        Object[] summaryData;
+        if (statusStr == null || statusStr.isBlank()) { // 전체
+            summaryData = advertisementRepository.findSummaryInfoAll().get(0);
+            log.info("전체 광고 리스트에 걸렸습니다. summaryData [0] [1] [2]:: {}, {}", summaryData, summaryData[0]);
+        } else { // 상태별로
+            summaryData = advertisementRepository.findSummaryInfoByStatus(Status.valueOf(statusStr)).get(0);
+            log.info("상태 광고 리스트에 걸렸습니다 . summaryData [0] [1] [2]:: {}, {}", summaryData, summaryData[0]);
+        }
 
-        return results.stream()
-                .map(AdvertisementConverter::convertToAdStatusDTO)
+        AdvertisementDTO.SummaryInfo summaryInfo = AdvertisementDTO.SummaryInfo.builder()
+                .fundingProjectCount(summaryData[0] != null ? (Long) summaryData[0] : 0L)
+                .totalDonorCount(summaryData[1] != null ? (Long) summaryData[1] : 0L)
+                .totalFundingAmount(summaryData[2] != null ? (Long) summaryData[2] : 0L)
+                .build();
+
+        // --- 2. 정렬 조건 생성 ---
+        Sort sort = switch (sortStr) {
+            case "closingSoon" -> Sort.by(Sort.Direction.ASC, "endDate"); // 마감임박순
+            case "highestAmount" -> Sort.by(Sort.Direction.DESC, "currentAmount"); // 모금액순
+            default -> Sort.by(Sort.Direction.DESC, "createdAt"); // 최신순
+        };
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // --- 3. 필터링 조건에 따라 광고 목록(Page) 조회 (1차 쿼리) ---
+        Page<Advertisement> adPage;
+        if (statusStr == null || statusStr.isBlank()) { // 전체
+            adPage = advertisementRepository.findAll(pageable);
+        } else { // 진행중/완료
+            adPage = advertisementRepository.findByStatus(Status.valueOf(statusStr), pageable);
+        }
+
+        if (!adPage.hasContent()) {
+            // 조회된 광고가 없으면 빈 응답 반환
+            return AdvertisementConverter.toMainResponse(summaryInfo, Collections.emptyList(), adPage);
+        }
+
+        // --- 4. 후원자 수 조회를 위한 ID 목록 추출 및 2차 쿼리 실행 ---
+        List<Long> adIds = adPage.getContent().stream()
+                .map(Advertisement::getAdvertisementId)
                 .collect(Collectors.toList());
+
+        // [광고 ID, 후원자 수] Map 생성 (조회를 쉽게 하기 위함)
+        Map<Long, Long> donorCountsMap = advertisementRepository.findDonorCountsByAdvertisementIds(adIds).stream()
+                .collect(Collectors.toMap(row -> (Long) row[0], row -> (Long) row[1]));
+
+        // --- 5. 최종 DTO 리스트 생성 ---
+        List<AdvertisementDTO.AdvertisementCard> adCards = adPage.getContent().stream()
+                .map(ad -> {
+                    // Map에서 해당 광고의 후원자 수를 찾음. 없으면 0으로 처리.
+                    Long donorCount = donorCountsMap.getOrDefault(ad.getAdvertisementId(), 0L);
+                    // Converter에 엔티티와 후원자 수를 함께 넘겨줌
+                    return AdvertisementConverter.toAdvertisementCard(ad, donorCount);
+                })
+                .collect(Collectors.toList());
+
+        // --- 6. 최종 응답 DTO 조립 및 반환 ---
+        return AdvertisementConverter.toMainResponse(summaryInfo, adCards, adPage);
     }
 
     @Override

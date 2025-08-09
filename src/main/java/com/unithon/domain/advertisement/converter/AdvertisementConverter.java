@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -21,23 +22,49 @@ public class AdvertisementConverter {
 
     // 광고현황 - 메인 DTO
 
-    public static AdvertisementDTO.AdStatusResponse convertToAdStatusDTO(AdQueryResultInterface result) {
-        // 남은 일수 계산
-        long remainingDays = ChronoUnit.DAYS.between(LocalDate.now(), result.getEndDate());
-        if (remainingDays < 0) {
-            remainingDays = 0;
+    public static AdvertisementDTO.MainResponse toMainResponse(
+            AdvertisementDTO.SummaryInfo summaryInfo,
+            List<AdvertisementDTO.AdvertisementCard> adCards,
+            Page<Advertisement> adPage) {
+
+        AdvertisementDTO.Pagination pagination = AdvertisementDTO.Pagination.builder()
+                .currentPage(adPage.getNumber())
+                .totalPages(adPage.getTotalPages())
+                .totalElements(adPage.getTotalElements())
+                .build();
+
+        return AdvertisementDTO.MainResponse.builder()
+                .summaryInfo(summaryInfo)
+                .advertisements(adCards)
+                .pagination(pagination)
+                .build();
+    }
+
+    /**
+     * Advertisement 엔티티와 후원자 수를 받아 광고 카드 DTO로 변환합니다.
+     * @param ad Advertisement 엔티티
+     * @param donorCount 해당 광고의 후원자 수
+     * @return AdvertisementCard DTO
+     */
+    public static AdvertisementDTO.AdvertisementCard toAdvertisementCard(Advertisement ad, Long donorCount) {
+        long remainingDays = ChronoUnit.DAYS.between(LocalDate.now(), ad.getEndDate());
+        if (remainingDays < 0) remainingDays = 0;
+
+        int progressPercentage = 0;
+        if (ad.getGoalAmount() > 0) {
+            progressPercentage = (int) (((double) ad.getCurrentAmount() / ad.getGoalAmount()) * 100);
         }
 
-        return AdvertisementDTO.AdStatusResponse.builder()
-                .advertisementId(result.getAdvertisementId())
-                .adTitle(result.getAdTitle())
-                .artistName(result.getArtistName())
-                .imageUrl(result.getImageUrl())
-                .mediaType(MediaType.valueOf(result.getMediaType())) // String -> Enum 변환
-                .currentAmount(result.getCurrentAmount())
-                .goalAmount(result.getGoalAmount())
-                .donorCount(result.getDonorCount())
+        return AdvertisementDTO.AdvertisementCard.builder()
+                .advertisementId(ad.getAdvertisementId())
+                .purpose(ad.getPurpose())
+                .artistName(ad.getArtistId().getName())
+                .title(ad.getName())
+                .progressPercentage(progressPercentage)
+                .currentAmount(ad.getCurrentAmount())
+                .donorCount(donorCount) // 계산된 값을 직접 주입
                 .remainingDays(remainingDays)
+                .imageUrl(ad.getImageUrl())
                 .build();
     }
 
