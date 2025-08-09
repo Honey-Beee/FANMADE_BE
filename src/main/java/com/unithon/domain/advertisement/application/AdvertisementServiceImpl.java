@@ -7,6 +7,7 @@ import com.unithon.domain.advertisement.domain.repository.AdQueryResultInterface
 import com.unithon.domain.advertisement.domain.repository.AdvertisementRepository;
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
 import com.unithon.domain.donation.repository.DonationRepository;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,9 +25,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class AdvertisementServiceImpl implements AdvertisementService{
     private final AdvertisementRepository advertisementRepository;
+    private final EntityManager em;
 
     @Override
+    @Transactional(readOnly = true)
     public AdvertisementDTO.MainResponse getAdvertisementsMain(String statusStr, String sortStr, int page, int size) {
+        em.clear();
+
         // --- 1. 요약 정보 조회 ---
         Object[] summaryData;
         if (statusStr == null || statusStr.isBlank()) { // 전체
@@ -88,7 +94,10 @@ public class AdvertisementServiceImpl implements AdvertisementService{
     }
 
     @Override
+    @Transactional(readOnly = true)
     public AdvertisementDTO.AdvertisementDetailResponse getAdvertisementDetail(Long advertisementId) {
+        em.clear();
+
         // 1. Repository를 호출하여 [Advertisement, donorCount] 형태의 결과를 조회
         Object[] result = advertisementRepository.findAdvertisementWithDonorCountById(advertisementId)
                 .orElseThrow(() -> new RuntimeException("해당 광고를 찾을 수 없습니다. ID: " + advertisementId));
