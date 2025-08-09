@@ -29,7 +29,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()  // 로그인, 회원가입은 허용
+                        .requestMatchers(
+                                "/auth/**",
+                                "/swagger-ui/**", "/v3/api-docs/**").permitAll()  // 로그인, 회원가입은 허용
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
