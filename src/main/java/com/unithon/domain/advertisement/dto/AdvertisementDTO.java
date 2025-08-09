@@ -26,13 +26,4 @@ public class AdvertisementDTO {
         private Long remainingDays; // 남은 일수
     }
 
-    /**
-     * Repository에서 JPQL 결과를 받아오기 위한 중간 DTO
-     */
-    @Getter
-    @AllArgsConstructor
-    public static class AdQueryResult {
-        private Advertisement advertisement;
-        private Long donorCount;
-    }
 }
