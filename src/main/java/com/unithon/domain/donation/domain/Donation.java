@@ -33,5 +33,6 @@ public class Donation extends BaseEntity {
 
     @Column(nullable = false)
     private Long amount;
+    private String message; // 응원문구
 
 }

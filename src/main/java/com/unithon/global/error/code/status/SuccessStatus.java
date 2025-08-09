@@ -19,7 +19,10 @@ public enum SuccessStatus implements BaseCode {
 
     // Advertisement
     ADVERTISEMENT_LIST_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_3001", "현재 FUNDING중인 광고리스트 조회 성공"),
-    ADVERTISEMENT_DETAIL_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_3001", "광고 디테일 메인 페이지 조회 성공")
+    ADVERTISEMENT_DETAIL_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_3001", "광고 디테일 메인 페이지 조회 성공"),
+
+    // Donation
+    DONATION_SUCCESS(HttpStatus.OK, "DONATION_4001", "후원 등록 성공")
 
     ;
 

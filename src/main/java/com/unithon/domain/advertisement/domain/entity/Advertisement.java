@@ -46,4 +46,8 @@ public class Advertisement extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Purpose purpose; // 데뷔, 생일, 컴백, 기타
+
+    public void addCurrentAmount(Long amount) {
+        this.currentAmount += amount;
+    }
 }
