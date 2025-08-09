@@ -1,6 +1,7 @@
 package com.unithon.domain.bus.domain.entity;
 
 import com.unithon.domain.advertisement.domain.entity.Advertisement;
+import com.unithon.domain.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Bus {
+public class Bus extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

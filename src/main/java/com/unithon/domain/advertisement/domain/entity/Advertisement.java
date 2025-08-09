@@ -1,5 +1,6 @@
 package com.unithon.domain.advertisement.domain.entity;
 
+import com.unithon.domain.model.BaseEntity;
 import com.unithon.domain.user.domain.entity.Artist;
 import com.unithon.domain.user.domain.entity.User;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Advertisement {
+public class Advertisement extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

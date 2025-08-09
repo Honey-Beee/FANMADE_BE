@@ -1,6 +1,7 @@
 package com.unithon.domain.subway.domain.entity;
 
 import com.unithon.domain.advertisement.domain.entity.Advertisement;
+import com.unithon.domain.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Subway {
+public class Subway extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
