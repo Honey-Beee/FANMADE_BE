@@ -1,6 +1,6 @@
 package com.unithon.config;
 
-import com.unithon.user.domain.entity.User;
+import com.unithon.domain.user.domain.entity.User;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

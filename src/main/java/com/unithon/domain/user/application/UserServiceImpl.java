@@ -1,10 +1,10 @@
-package com.unithon.user.application;
+package com.unithon.domain.user.application;
 
 import com.unithon.config.JwtUtil;
-import com.unithon.user.converter.UserConverter;
-import com.unithon.user.domain.entity.User;
-import com.unithon.user.domain.repository.UserRepository;
-import com.unithon.user.dto.UserDTO;
+import com.unithon.domain.user.converter.UserConverter;
+import com.unithon.domain.user.domain.repository.UserRepository;
+import com.unithon.domain.user.dto.UserDTO;
+import com.unithon.domain.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

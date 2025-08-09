@@ -1,11 +1,10 @@
-package com.unithon.user.controller;
+package com.unithon.domain.user.controller;
 
+import com.unithon.domain.user.dto.UserDTO;
 import com.unithon.global.common.BaseResponse;
 import com.unithon.global.error.code.status.SuccessStatus;
-import com.unithon.user.dto.UserDTO;
-import com.unithon.user.application.UserService;
+import com.unithon.domain.user.application.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
