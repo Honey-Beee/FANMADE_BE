@@ -52,6 +52,7 @@ public class AdvertisementServiceImpl implements AdvertisementService{
         Sort sort = switch (sortStr) {
             case "closingSoon" -> Sort.by(Sort.Direction.ASC, "endDate"); // 마감임박순
             case "highestAmount" -> Sort.by(Sort.Direction.DESC, "currentAmount"); // 모금액순
+            // 'popular'를 포함한 나머지는 모두 최신순으로 DB에서 가져옵니다.
             default -> Sort.by(Sort.Direction.DESC, "createdAt"); // 최신순
         };
 
@@ -88,6 +89,10 @@ public class AdvertisementServiceImpl implements AdvertisementService{
                     return AdvertisementConverter.toAdvertisementCard(ad, donorCount);
                 })
                 .collect(Collectors.toList());
+
+        if ("popular".equals(sortStr)) {
+            adCards.sort(Comparator.comparing(AdvertisementDTO.AdvertisementCard::getDonorCount).reversed());
+        }
 
         // --- 6. 최종 응답 DTO 조립 및 반환 ---
         return AdvertisementConverter.toMainResponse(summaryInfo, adCards, adPage);
