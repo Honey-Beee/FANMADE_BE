@@ -50,8 +50,8 @@ public class AdvertisementDTO {
         private int currentAmount;        // 현재 모금액
         private Long donorCount;          // 참여자 수
         private Long remainingDays;       // 남은 기간
-      //  private String location;          // 광고 장소 (e.g., 타임스퀘어 전광판)
         private String imageUrl;
+        private String location;          // 버스 -> ex) N버스, (버스번호) 버스, 지하철 -> xx역 xx선
     }
 
     @Builder
