@@ -36,4 +36,6 @@ public class Bus extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advertisement_id")
     private Advertisement advertisement;
+
+    public void assign(Advertisement ad) { this.advertisement = ad; }
 }

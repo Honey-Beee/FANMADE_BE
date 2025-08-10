@@ -19,4 +19,13 @@ public class ArtistDTO {
         private String name;
         private String imageUrl;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class RecommendArtistResponse {
+        private Long artistId;
+        private String name;
+        private String imageUrl;
+    }
 }

@@ -51,6 +51,62 @@ public class AdvertisementController {
         return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_DETAIL_SUCCESS, response);
     }
 
+    @PostMapping("/drafts")
+    public BaseResponse<AdvertisementDTO.CreateDraftResponse> createDraft(
+            @RequestBody AdvertisementDTO.CreateDraftRequest request
+    ) {
+        Long adId = advertisementService.createDraft(request);
+        AdvertisementDTO.CreateDraftResponse body =
+                AdvertisementDTO.CreateDraftResponse.builder()
+                        .adId(adId).status("DRAFT").build();
+        return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_DRAFT_CREATED, body);
+    }
+
+    @PatchMapping("/{advertisementId}/funding")
+    public BaseResponse<AdvertisementDTO.FundingInfoResponse> setFunding(
+            @PathVariable Long advertisementId,
+            @RequestBody AdvertisementDTO.FundingInfoRequest request
+    ) {
+        AdvertisementDTO.FundingInfoResponse res =
+                advertisementService.setFunding(advertisementId, request);
+        return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_FUNDING_SAVED, res);
+    }
+
+    @GetMapping("/{advertisementId}/places/filter")
+    public BaseResponse<AdvertisementDTO.PlacementListResponse> filterPlacements(
+            @RequestParam String mediaType,
+            @RequestParam Integer budget
+    ) {
+        AdvertisementDTO.PlacementListResponse res =
+                advertisementService.filterPlacements(mediaType, budget);
+        return BaseResponse.onSuccess(SuccessStatus.PLACEMENT_FILTERED, res);
+    }
+
+    @PostMapping("/{advertisementId}/places/choose")
+    public BaseResponse<AdvertisementDTO.ChosenPlaceResponse> choosePlace(
+            @PathVariable Long advertisementId,
+            @RequestBody AdvertisementDTO.ChoosePlaceRequest request
+    ) {
+        AdvertisementDTO.ChosenPlaceResponse res =
+                advertisementService.choosePlace(advertisementId, request);
+        return BaseResponse.onSuccess(SuccessStatus.PLACE_CHOSEN, res);
+    }
+
+    @GetMapping("/{advertisementId}/summary")
+    public BaseResponse<AdvertisementDTO.SummaryResponse> getSummary(
+            @PathVariable Long advertisementId
+    ) {
+        AdvertisementDTO.SummaryResponse res = advertisementService.getSummary(advertisementId);
+        return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_SUMMARY_SUCCESS, res);
+    }
+
+    @PostMapping("/{advertisementId}/submit")
+    public BaseResponse<AdvertisementDTO.SubmitResponse> submitAdvertisement(
+            @PathVariable Long advertisementId
+    ) {
+        AdvertisementDTO.SubmitResponse res = advertisementService.submitAdvertisement(advertisementId);
+        return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_SUBMITTED, res);
+    }
 
 }
 

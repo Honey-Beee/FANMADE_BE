@@ -2,11 +2,22 @@ package com.unithon.domain.advertisement.application;
 
 import com.unithon.domain.advertisement.converter.AdvertisementConverter;
 import com.unithon.domain.advertisement.domain.entity.Advertisement;
+import com.unithon.domain.advertisement.domain.entity.MediaType;
 import com.unithon.domain.advertisement.domain.entity.Status;
 import com.unithon.domain.advertisement.domain.repository.AdQueryResultInterface;
 import com.unithon.domain.advertisement.domain.repository.AdvertisementRepository;
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
+import com.unithon.domain.bus.domain.entity.Bus;
+import com.unithon.domain.bus.domain.repository.BusRepository;
 import com.unithon.domain.donation.repository.DonationRepository;
+import com.unithon.domain.subway.domain.entity.Subway;
+import com.unithon.domain.subway.domain.repository.SubwayRepository;
+import com.unithon.domain.user.domain.entity.Artist;
+import com.unithon.domain.user.domain.entity.User;
+import com.unithon.domain.user.domain.repository.ArtistRepository;
+import com.unithon.domain.user.domain.repository.UserRepository;
+import com.unithon.global.error.code.status.ErrorStatus;
+import com.unithon.global.exception.GeneralException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +25,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +40,10 @@ import java.util.stream.Collectors;
 public class AdvertisementServiceImpl implements AdvertisementService{
     private final AdvertisementRepository advertisementRepository;
     private final EntityManager em;
+    private final UserRepository userRepository;
+    private final ArtistRepository artistRepository;
+    private final SubwayRepository subwayRepository;
+    private final BusRepository busRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -116,6 +134,159 @@ public class AdvertisementServiceImpl implements AdvertisementService{
 
         // 3. Converter를 사용하여 최종 DTO로 변환 후 반환
         return AdvertisementConverter.toAdvertisementDetailResponse(advertisement, donorCount);
+    }
+
+    @Override
+    @Transactional
+    public Long createDraft(AdvertisementDTO.CreateDraftRequest req) {
+        Long userId = currentUserId();
+        User user = userRepository.getReferenceById(userId);
+        Artist artist = artistRepository.getReferenceById(req.getArtistId());
+
+        Advertisement ad = AdvertisementConverter.toDraftEntity(artist, user, req);
+
+        return advertisementRepository.save(ad).getAdvertisementId();
+    }
+
+    @Override
+    @Transactional
+    public AdvertisementDTO.FundingInfoResponse setFunding(Long adId
+                                                           ,AdvertisementDTO.FundingInfoRequest req) {
+        Long userId = currentUserId();
+        Advertisement ad = advertisementRepository
+                .findByAdvertisementIdAndUser_Id(adId, userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
+
+        if (req.getGoalAmount() == null || req.getGoalAmount() < 100_000) {
+            throw new GeneralException(ErrorStatus.INVALID_FUNDING_GOAL);
+        }
+        if (req.getStartDate() == null || req.getEndDate() == null ||
+                !req.getEndDate().isAfter(req.getStartDate())) {
+            throw new GeneralException(ErrorStatus.INVALID_FUNDING_PERIOD);
+        }
+
+        ad.applyFunding(req.getStartDate(), req.getEndDate(), req.getGoalAmount(), req.getMediaType());
+
+        return AdvertisementConverter.toFundingInfoResponse(ad);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AdvertisementDTO.PlacementListResponse filterPlacements(String mediaType, Integer budget) {
+
+        if (!"SUBWAY".equalsIgnoreCase(mediaType) && !"BUS".equalsIgnoreCase(mediaType)) {
+            throw new GeneralException(ErrorStatus.INVALID_MEDIA_TYPE);
+        }
+
+        List<AdvertisementDTO.PlacementItem> items;
+        if ("SUBWAY".equalsIgnoreCase(mediaType)) {
+            items = subwayRepository.findWithinBudget(budget).stream()
+                    .map(AdvertisementConverter::toItem)
+                    .toList();
+        } else {
+            items = busRepository.findWithinBudget(budget).stream()
+                    .map(AdvertisementConverter::toItem)
+                    .toList();
+        }
+
+        return AdvertisementDTO.PlacementListResponse.builder()
+                .mediaType(mediaType.toUpperCase())
+                .budget(budget)
+                .items(items)
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public AdvertisementDTO.ChosenPlaceResponse choosePlace(Long adId, AdvertisementDTO.ChoosePlaceRequest req) {
+        Advertisement ad = advertisementRepository.findById(adId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
+
+        MediaType reqType = req.getMediaType();
+
+        if (subwayRepository.existsByAdvertisement_AdvertisementId(adId) ||
+                busRepository.existsByAdvertisement_AdvertisementId(adId)) {
+            throw new GeneralException(ErrorStatus.AD_ALREADY_HAS_PLACE);
+        }
+
+        if ("BUS".equalsIgnoreCase(reqType.toString())) {
+            Bus b = busRepository.findByIdForUpdate(req.getPlaceId())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.PLACE_NOT_FOUND));
+            if (b.getAdvertisement() != null) throw new GeneralException(ErrorStatus.PLACE_ALREADY_ASSIGNED);
+
+            b.assign(ad);
+            return AdvertisementConverter.toChosenFromBus(adId, b);
+
+        } else if ("SUBWAY".equalsIgnoreCase(reqType.toString())) {
+            Subway s = subwayRepository.findByIdForUpdate(req.getPlaceId())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.PLACE_NOT_FOUND));
+            if (s.getAdvertisement() != null) throw new GeneralException(ErrorStatus.PLACE_ALREADY_ASSIGNED);
+
+            s.assign(ad);
+            return AdvertisementConverter.toChosenFromSubway(adId, s);
+
+        } else {
+            throw new GeneralException(ErrorStatus.INVALID_MEDIA_TYPE);
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AdvertisementDTO.SummaryResponse getSummary(Long adId) {
+        Advertisement ad = advertisementRepository.findById(adId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
+
+
+        Subway subway = subwayRepository.findByAdvertisementId(adId);
+        if (subway != null) {
+            return AdvertisementConverter.toSummaryResponse(ad, subway);
+        }
+
+        Bus bus = busRepository.findByAdvertisementId(adId);
+        if (bus != null) {
+            return AdvertisementConverter.toSummaryResponse(ad, bus);
+        }
+
+        throw new GeneralException(ErrorStatus.PLACE_NOT_FOUND);
+    }
+
+    @Override
+    @Transactional
+    public AdvertisementDTO.SubmitResponse submitAdvertisement(Long adId) {
+        Advertisement ad = advertisementRepository.findById(adId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
+
+        if (ad.getMediaType() == MediaType.SUBWAY) {
+            if (subwayRepository.findByAdvertisementId(adId) == null) {
+                throw new GeneralException(ErrorStatus.PLACE_NOT_FOUND);
+            }
+        } else if (ad.getMediaType() == MediaType.BUS) {
+            if (busRepository.findByAdvertisementId(adId) == null) {
+                throw new GeneralException(ErrorStatus.PLACE_NOT_FOUND);
+            }
+        }
+
+        ad.changeStatus(Status.FUNDING);
+        advertisementRepository.save(ad);
+
+        return AdvertisementDTO.SubmitResponse.builder()
+                .adId(ad.getAdvertisementId())
+                .status(ad.getStatus().name())
+                .build();
+    }
+
+    public Long currentUserId() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) throw new RuntimeException("인증 필요");
+
+        Object principal = auth.getPrincipal();
+        String email = (principal instanceof UserDetails)
+                ? ((UserDetails) principal).getUsername()
+                : String.valueOf(principal);
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("사용자 없음: " + email));
+        return user.getId();
     }
 
 }

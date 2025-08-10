@@ -27,5 +27,11 @@ public class ArtistController {
         List<ArtistDTO.ArtistResponse> response = artistService.searchArtists(keyword);
         return BaseResponse.onSuccess(SuccessStatus.ARTIST_SEARCH_SUCCESS, response);
     }
+
+    @GetMapping("/recommendations")
+    public BaseResponse<List<ArtistDTO.RecommendArtistResponse>> getRecommendations() {
+        List<ArtistDTO.RecommendArtistResponse> result = artistService.getMyRecommendedArtists();
+        return BaseResponse.onSuccess(SuccessStatus.ARTIST_RECOMMEND_SUCCESS, result);
+    }
 }
 

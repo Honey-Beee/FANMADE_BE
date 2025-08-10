@@ -2,6 +2,7 @@ package com.unithon.domain.advertisement.converter;
 
 import com.unithon.domain.advertisement.domain.entity.Advertisement;
 import com.unithon.domain.advertisement.domain.entity.MediaType;
+import com.unithon.domain.advertisement.domain.entity.Status;
 import com.unithon.domain.advertisement.domain.repository.AdQueryResultInterface;
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
 
@@ -12,6 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
+import com.unithon.domain.bus.domain.entity.Bus;
+import com.unithon.domain.subway.domain.entity.Subway;
+import com.unithon.domain.user.domain.entity.Artist;
+import com.unithon.domain.user.domain.entity.User;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
@@ -123,6 +128,134 @@ public class AdvertisementConverter {
                 .artistInfo(artistInfo)
                 .projectInfo(projectInfo)
                 .fundingStatus(fundingStatus)
+                .build();
+    }
+
+    public static Advertisement toDraftEntity(Artist artist, User user, AdvertisementDTO.CreateDraftRequest req) {
+        return Advertisement.builder()
+                .artistId(artist)
+                .user(user)
+                .name(req.getName())
+                .description(req.getDescription())
+                .status(Status.DRAFT)   // 드래프트 상태
+                .purpose(req.getPurpose())
+                .currentAmount(0)
+                .goalAmount(0)
+                .build();
+    }
+
+    public static AdvertisementDTO.FundingInfoResponse toFundingInfoResponse(Advertisement ad) {
+        return AdvertisementDTO.FundingInfoResponse.builder()
+                .adId(ad.getAdvertisementId())
+                .mediaType(ad.getMediaType())
+                .startDate(ad.getStartDate())
+                .endDate(ad.getEndDate())
+                .goalAmount(ad.getGoalAmount())
+                .build();
+    }
+
+    public static AdvertisementDTO.PlacementItem toItem(Subway s) {
+        return AdvertisementDTO.PlacementItem.builder()
+                .type("SUBWAY")
+                .id(s.getId())
+                .price(s.getPrice())
+                .title(s.getLineCode() + "호선 " + s.getSubwayStation().getName())
+                .grade(s.getGrade() != null ? s.getGrade().name() : null)
+                .size(new AdvertisementDTO.PlacementItem.Size(s.getSizeWidthCm(), s.getSizeHeightCm()))
+                .subwayMeta(
+                        AdvertisementDTO.PlacementItem.SubwayMeta.builder()
+                                .lineCode(s.getLineCode())
+                                .stationName(s.getSubwayStation().getName())
+                                .type(s.getType())
+                                .build()
+                )
+                .build();
+    }
+
+    public static AdvertisementDTO.PlacementItem toItem(Bus b) {
+        return AdvertisementDTO.PlacementItem.builder()
+                .type("BUS")
+                .id(b.getId())
+                .price(b.getPrice())
+                .title("버스 " + b.getBusType() + " / " + b.getFace())
+                .grade(b.getGrade() != null ? b.getGrade().name() : null)
+                .size(new AdvertisementDTO.PlacementItem.Size(b.getSizeWidthCm(), b.getSizeHeightCm()))
+                .busMeta(
+                        AdvertisementDTO.PlacementItem.BusMeta.builder()
+                                .busType(b.getBusType() != null ? b.getBusType().name() : null)
+                                .faceType(b.getFace() != null ? b.getFace().name() : null)
+                                .build()
+                )
+                .build();
+    }
+
+    public static AdvertisementDTO.ChosenPlaceResponse toChosenFromSubway(Long adId, Subway s) {
+        return AdvertisementDTO.ChosenPlaceResponse.builder()
+                .adId(adId)
+                .mediaType("SUBWAY")
+                .placeId(s.getId())
+                .build();
+    }
+
+    public static AdvertisementDTO.ChosenPlaceResponse toChosenFromBus(Long adId, Bus b) {
+        return AdvertisementDTO.ChosenPlaceResponse.builder()
+                .adId(adId)
+                .mediaType("BUS")
+                .placeId(b.getId())
+                .build();
+    }
+
+    public static AdvertisementDTO.SummaryResponse toSummaryResponse(Advertisement ad, Subway s) {
+        return AdvertisementDTO.SummaryResponse.builder()
+                .adId(ad.getAdvertisementId())
+                .artist(AdvertisementDTO.SummaryResponse.ArtistSummary.builder()
+                        .artistId(ad.getArtistId().getId())
+                        .artistName(ad.getArtistId().getName())
+                        .artistImageUrl(ad.getArtistId().getImageUrl())
+                        .build())
+                .project(AdvertisementDTO.SummaryResponse.ProjectSummary.builder()
+                        .purpose(ad.getPurpose()!=null ? ad.getPurpose().name() : null)
+                        .startDate(ad.getStartDate()!=null? ad.getStartDate().toString(): null)
+                        .endDate(ad.getEndDate()!=null? ad.getEndDate().toString(): null)
+                        .goalAmount(ad.getGoalAmount())
+                        .build())
+                .mediaType("SUBWAY")
+                .subway(AdvertisementDTO.SummaryResponse.SubwaySummary.builder()
+                        .grade(s.getGrade()!=null? s.getGrade().name(): null)
+                        .type(s.getType()!=null? s.getType().name(): null)
+                        .lineCode(s.getLineCode())
+                        .stationName(s.getSubwayStation()!=null? s.getSubwayStation().getName(): null)
+                        .placement(s.getPlacement())
+                        .price(s.getPrice())
+                        .sizeWidthCm(s.getSizeWidthCm())
+                        .sizeHeightCm(s.getSizeHeightCm())
+                        .build())
+                .build();
+    }
+
+    public static AdvertisementDTO.SummaryResponse toSummaryResponse(Advertisement ad, Bus b) {
+        return AdvertisementDTO.SummaryResponse.builder()
+                .adId(ad.getAdvertisementId())
+                .artist(AdvertisementDTO.SummaryResponse.ArtistSummary.builder()
+                        .artistId(ad.getArtistId().getId())
+                        .artistName(ad.getArtistId().getName())
+                        .artistImageUrl(ad.getArtistId().getImageUrl())
+                        .build())
+                .project(AdvertisementDTO.SummaryResponse.ProjectSummary.builder()
+                        .purpose(ad.getPurpose()!=null ? ad.getPurpose().name() : null)
+                        .startDate(ad.getStartDate()!=null? ad.getStartDate().toString(): null)
+                        .endDate(ad.getEndDate()!=null? ad.getEndDate().toString(): null)
+                        .goalAmount(ad.getGoalAmount())
+                        .build())
+                .mediaType("BUS")
+                .bus(AdvertisementDTO.SummaryResponse.BusSummary.builder()
+                        .grade(b.getGrade()!=null? b.getGrade().name(): null)
+                        .busType(b.getBusType()!=null? b.getBusType().name(): null)
+                        .faceType(b.getFace()!=null? b.getFace().name(): null)
+                        .price(b.getPrice())
+                        .sizeWidthCm(b.getSizeWidthCm())
+                        .sizeHeightCm(b.getSizeHeightCm())
+                        .build())
                 .build();
     }
 

@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface ArtistService {
     public List<ArtistDTO.ArtistResponse> searchArtists(String keyword);
+    List<ArtistDTO.RecommendArtistResponse> getMyRecommendedArtists();
 }

@@ -56,4 +56,7 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
             "WHERE ad.advertisementId = :advertisementId " +
             "GROUP BY ad.advertisementId")
     Optional<Object[]> findAdvertisementWithDonorCountById(@Param("advertisementId") Long advertisementId);
+
+    // 소유자 확인용 메서드 추가
+    Optional<Advertisement> findByAdvertisementIdAndUser_Id(Long advertisementId, Long userId);
 }
