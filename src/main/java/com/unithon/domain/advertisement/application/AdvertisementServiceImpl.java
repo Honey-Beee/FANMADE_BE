@@ -230,6 +230,26 @@ public class AdvertisementServiceImpl implements AdvertisementService{
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public AdvertisementDTO.SummaryResponse getSummary(Long adId) {
+        Advertisement ad = advertisementRepository.findById(adId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
+
+
+        Subway subway = subwayRepository.findByAdvertisementId(adId);
+        if (subway != null) {
+            return AdvertisementConverter.toSummaryResponse(ad, subway);
+        }
+
+        Bus bus = busRepository.findByAdvertisementId(adId);
+        if (bus != null) {
+            return AdvertisementConverter.toSummaryResponse(ad, bus);
+        }
+
+        throw new GeneralException(ErrorStatus.PLACE_NOT_FOUND);
+    }
+
 
 
     public Long currentUserId() {

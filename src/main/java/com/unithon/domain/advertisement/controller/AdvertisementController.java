@@ -92,6 +92,13 @@ public class AdvertisementController {
         return BaseResponse.onSuccess(SuccessStatus.PLACE_CHOSEN, res);
     }
 
+    @GetMapping("/{advertisementId}/summary")
+    public BaseResponse<AdvertisementDTO.SummaryResponse> getSummary(
+            @PathVariable Long advertisementId
+    ) {
+        AdvertisementDTO.SummaryResponse res = advertisementService.getSummary(advertisementId);
+        return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_SUMMARY_SUCCESS, res);
+    }
 
 }
 

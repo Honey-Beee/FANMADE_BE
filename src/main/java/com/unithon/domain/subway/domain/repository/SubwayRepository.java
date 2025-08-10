@@ -25,4 +25,7 @@ public interface SubwayRepository extends JpaRepository<Subway, Long> {
     Optional<Subway> findByIdForUpdate(@Param("id") Long id);
 
     boolean existsByAdvertisement_AdvertisementId(Long adId);
+
+    @Query("select s from Subway s where s.advertisement.advertisementId = :adId")
+    Subway findByAdvertisementId(@Param("adId") Long adId);
 }

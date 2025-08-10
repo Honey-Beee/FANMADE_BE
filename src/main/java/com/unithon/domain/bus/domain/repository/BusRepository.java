@@ -25,4 +25,7 @@ public interface BusRepository extends JpaRepository<Bus, Long> {
     Optional<Bus> findByIdForUpdate(@Param("id") Long id);
 
     boolean existsByAdvertisement_AdvertisementId(Long adId);
+
+    @Query("select b from Bus b where b.advertisement.advertisementId = :adId")
+    Bus findByAdvertisementId(@Param("adId") Long adId);
 }

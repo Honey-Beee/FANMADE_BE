@@ -205,6 +205,60 @@ public class AdvertisementConverter {
                 .build();
     }
 
+    public static AdvertisementDTO.SummaryResponse toSummaryResponse(Advertisement ad, Subway s) {
+        return AdvertisementDTO.SummaryResponse.builder()
+                .adId(ad.getAdvertisementId())
+                .artist(AdvertisementDTO.SummaryResponse.ArtistSummary.builder()
+                        .artistId(ad.getArtistId().getId())
+                        .artistName(ad.getArtistId().getName())
+                        .artistImageUrl(ad.getArtistId().getImageUrl())
+                        .build())
+                .project(AdvertisementDTO.SummaryResponse.ProjectSummary.builder()
+                        .purpose(ad.getPurpose()!=null ? ad.getPurpose().name() : null)
+                        .startDate(ad.getStartDate()!=null? ad.getStartDate().toString(): null)
+                        .endDate(ad.getEndDate()!=null? ad.getEndDate().toString(): null)
+                        .goalAmount(ad.getGoalAmount())
+                        .build())
+                .mediaType("SUBWAY")
+                .subway(AdvertisementDTO.SummaryResponse.SubwaySummary.builder()
+                        .grade(s.getGrade()!=null? s.getGrade().name(): null)
+                        .type(s.getType()!=null? s.getType().name(): null)
+                        .lineCode(s.getLineCode())
+                        .stationName(s.getSubwayStation()!=null? s.getSubwayStation().getName(): null)
+                        .placement(s.getPlacement())
+                        .price(s.getPrice())
+                        .sizeWidthCm(s.getSizeWidthCm())
+                        .sizeHeightCm(s.getSizeHeightCm())
+                        .build())
+                .build();
+    }
+
+    public static AdvertisementDTO.SummaryResponse toSummaryResponse(Advertisement ad, Bus b) {
+        return AdvertisementDTO.SummaryResponse.builder()
+                .adId(ad.getAdvertisementId())
+                .artist(AdvertisementDTO.SummaryResponse.ArtistSummary.builder()
+                        .artistId(ad.getArtistId().getId())
+                        .artistName(ad.getArtistId().getName())
+                        .artistImageUrl(ad.getArtistId().getImageUrl())
+                        .build())
+                .project(AdvertisementDTO.SummaryResponse.ProjectSummary.builder()
+                        .purpose(ad.getPurpose()!=null ? ad.getPurpose().name() : null)
+                        .startDate(ad.getStartDate()!=null? ad.getStartDate().toString(): null)
+                        .endDate(ad.getEndDate()!=null? ad.getEndDate().toString(): null)
+                        .goalAmount(ad.getGoalAmount())
+                        .build())
+                .mediaType("BUS")
+                .bus(AdvertisementDTO.SummaryResponse.BusSummary.builder()
+                        .grade(b.getGrade()!=null? b.getGrade().name(): null)
+                        .busType(b.getBusType()!=null? b.getBusType().name(): null)
+                        .faceType(b.getFace()!=null? b.getFace().name(): null)
+                        .price(b.getPrice())
+                        .sizeWidthCm(b.getSizeWidthCm())
+                        .sizeHeightCm(b.getSizeHeightCm())
+                        .build())
+                .build();
+    }
+
 }
 
 
