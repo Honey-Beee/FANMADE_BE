@@ -9,6 +9,8 @@ import com.unithon.domain.comment.dto.CommentDTO;
 import com.unithon.domain.user.domain.entity.User;
 import com.unithon.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,5 +43,16 @@ public class CommentServiceImpl implements CommentService {
 
         // 4. 저장된 엔티티를 Converter를 통해 응답 DTO로 변환하여 반환
         return CommentConverter.toCommentResponse(newComment);
+    }
+
+    @Override
+    public CommentDTO.CommentListResponse getComments(Long advertisementId, Pageable pageable) {
+
+            // 1. Repository를 호출하여 댓글 Page를 조회 (User 정보가 함께 로드됨)
+            Page<Comment> commentPage = commentRepository.findByAdvertisementIdWithUser(advertisementId, pageable);
+
+            // 2. Converter를 사용하여 최종 응답 DTO로 변환 후 반환
+            return CommentConverter.toCommentListResponse(commentPage);
+
     }
 }

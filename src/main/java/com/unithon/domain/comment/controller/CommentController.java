@@ -7,6 +7,9 @@ import com.unithon.domain.user.domain.repository.UserRepository;
 import com.unithon.global.common.BaseResponse;
 import com.unithon.global.error.code.status.SuccessStatus;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -38,5 +41,24 @@ public class CommentController {
 
         // 3. 성공 응답 반환
         return BaseResponse.onSuccess(SuccessStatus.COMMENT_CREATE_SUCCESS, response);
+    }
+
+    /**
+     * 특정 광고의 댓글 목록 조회 (인증 불필요)
+     */
+    @GetMapping
+    public BaseResponse<CommentDTO.CommentListResponse> getComments(
+            @PathVariable Long advertisementId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        // 1. 페이지네이션 및 정렬 정보 생성 (최신 댓글이 위로 오도록)
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        // 2. 서비스 로직 호출
+        CommentDTO.CommentListResponse response = commentService.getComments(advertisementId, pageable);
+
+        // 3. 성공 응답 반환
+        return BaseResponse.onSuccess(SuccessStatus.COMMENT_LIST_SUCCESS, response);
     }
 }
