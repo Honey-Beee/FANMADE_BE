@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
+import com.unithon.domain.bus.domain.entity.Bus;
+import com.unithon.domain.subway.domain.entity.Subway;
 import com.unithon.domain.user.domain.entity.Artist;
 import com.unithon.domain.user.domain.entity.User;
 import org.springframework.data.domain.Page;
@@ -145,12 +147,47 @@ public class AdvertisementConverter {
     public static AdvertisementDTO.FundingInfoResponse toFundingInfoResponse(Advertisement ad) {
         return AdvertisementDTO.FundingInfoResponse.builder()
                 .adId(ad.getAdvertisementId())
+                .mediaType(ad.getMediaType())
                 .startDate(ad.getStartDate())
                 .endDate(ad.getEndDate())
                 .goalAmount(ad.getGoalAmount())
                 .build();
     }
 
+    public static AdvertisementDTO.PlacementItem toItem(Subway s) {
+        return AdvertisementDTO.PlacementItem.builder()
+                .type("SUBWAY")
+                .id(s.getId())
+                .price(s.getPrice())
+                .title(s.getLineCode() + "호선 " + s.getSubwayStation().getName())
+                .grade(s.getGrade() != null ? s.getGrade().name() : null)
+                .size(new AdvertisementDTO.PlacementItem.Size(s.getSizeWidthCm(), s.getSizeHeightCm()))
+                .subwayMeta(
+                        AdvertisementDTO.PlacementItem.SubwayMeta.builder()
+                                .lineCode(s.getLineCode())
+                                .stationName(s.getSubwayStation().getName())
+                                .type(s.getType())
+                                .build()
+                )
+                .build();
+    }
+
+    public static AdvertisementDTO.PlacementItem toItem(Bus b) {
+        return AdvertisementDTO.PlacementItem.builder()
+                .type("BUS")
+                .id(b.getId())
+                .price(b.getPrice())
+                .title("버스 " + b.getBusType() + " / " + b.getFace())
+                .grade(b.getGrade() != null ? b.getGrade().name() : null)
+                .size(new AdvertisementDTO.PlacementItem.Size(b.getSizeWidthCm(), b.getSizeHeightCm()))
+                .busMeta(
+                        AdvertisementDTO.PlacementItem.BusMeta.builder()
+                                .busType(b.getBusType() != null ? b.getBusType().name() : null)
+                                .faceType(b.getFace() != null ? b.getFace().name() : null)
+                                .build()
+                )
+                .build();
+    }
 
 }
 

@@ -72,6 +72,16 @@ public class AdvertisementController {
         return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_FUNDING_SAVED, res);
     }
 
+    @GetMapping("/{advertisementId}/places/filter")
+    public BaseResponse<AdvertisementDTO.PlacementListResponse> filterPlacements(
+            @RequestParam String mediaType,
+            @RequestParam Integer budget
+    ) {
+        AdvertisementDTO.PlacementListResponse res =
+                advertisementService.filterPlacements(mediaType, budget);
+        return BaseResponse.onSuccess(SuccessStatus.PLACEMENT_FILTERED, res);
+    }
+
 
 }
 

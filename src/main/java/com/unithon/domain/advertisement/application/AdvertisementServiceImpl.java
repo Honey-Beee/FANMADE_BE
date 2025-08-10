@@ -6,7 +6,9 @@ import com.unithon.domain.advertisement.domain.entity.Status;
 import com.unithon.domain.advertisement.domain.repository.AdQueryResultInterface;
 import com.unithon.domain.advertisement.domain.repository.AdvertisementRepository;
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
+import com.unithon.domain.bus.domain.repository.BusRepository;
 import com.unithon.domain.donation.repository.DonationRepository;
+import com.unithon.domain.subway.domain.repository.SubwayRepository;
 import com.unithon.domain.user.domain.entity.Artist;
 import com.unithon.domain.user.domain.entity.User;
 import com.unithon.domain.user.domain.repository.ArtistRepository;
@@ -37,6 +39,8 @@ public class AdvertisementServiceImpl implements AdvertisementService{
     private final EntityManager em;
     private final UserRepository userRepository;
     private final ArtistRepository artistRepository;
+    private final SubwayRepository subwayRepository;
+    private final BusRepository busRepository;
 
     @Override
     @Transactional(readOnly = true)
@@ -158,9 +162,35 @@ public class AdvertisementServiceImpl implements AdvertisementService{
             throw new GeneralException(ErrorStatus.INVALID_FUNDING_PERIOD);
         }
 
-        ad.applyFunding(req.getStartDate(), req.getEndDate(), req.getGoalAmount());
+        ad.applyFunding(req.getStartDate(), req.getEndDate(), req.getGoalAmount(), req.getMediaType());
 
         return AdvertisementConverter.toFundingInfoResponse(ad);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AdvertisementDTO.PlacementListResponse filterPlacements(String mediaType, Integer budget) {
+
+        if (!"SUBWAY".equalsIgnoreCase(mediaType) && !"BUS".equalsIgnoreCase(mediaType)) {
+            throw new GeneralException(ErrorStatus.INVALID_MEDIA_TYPE);
+        }
+
+        List<AdvertisementDTO.PlacementItem> items;
+        if ("SUBWAY".equalsIgnoreCase(mediaType)) {
+            items = subwayRepository.findWithinBudget(budget).stream()
+                    .map(AdvertisementConverter::toItem)
+                    .toList();
+        } else {
+            items = busRepository.findWithinBudget(budget).stream()
+                    .map(AdvertisementConverter::toItem)
+                    .toList();
+        }
+
+        return AdvertisementDTO.PlacementListResponse.builder()
+                .mediaType(mediaType.toUpperCase())
+                .budget(budget)
+                .items(items)
+                .build();
     }
 
     public Long currentUserId() {

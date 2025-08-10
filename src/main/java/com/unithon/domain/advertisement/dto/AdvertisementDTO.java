@@ -3,10 +3,12 @@ package com.unithon.domain.advertisement.dto;
 import com.unithon.domain.advertisement.domain.entity.Advertisement;
 import com.unithon.domain.advertisement.domain.entity.MediaType;
 import com.unithon.domain.advertisement.domain.entity.Purpose;
+import com.unithon.domain.subway.domain.entity.Type;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 public class AdvertisementDTO {
 
@@ -127,7 +129,7 @@ public class AdvertisementDTO {
         private Long artistId;
         private Purpose purpose;     // BIRTHDAY/DEBUT/COMEBACK/ETC
         private String name;         // 프로젝트명(카드 타이틀)
-        private String description;           // 선택
+        private String description;
     }
 
     @Getter
@@ -146,6 +148,7 @@ public class AdvertisementDTO {
     public static class FundingInfoRequest {
         private LocalDate startDate;
         private LocalDate endDate;
+        private MediaType mediaType;
         private Integer goalAmount;  // 최소 100000 권장
     }
 
@@ -157,7 +160,66 @@ public class AdvertisementDTO {
         private Long adId;
         private LocalDate startDate;
         private LocalDate endDate;
+        private MediaType mediaType;
         private Integer goalAmount;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PlacementItem {
+        private String type;        // SUBWAY | BUS
+        private Long id;
+        private Integer price;
+        private String title;       // 화면 표시용
+        private Size size;          // 공통: 규격
+
+        // 공통 등급
+        private String grade;       // SSA/SA/A
+
+        // 매체별 상세정보
+        private SubwayMeta subwayMeta;
+        private BusMeta busMeta;
+
+        @Getter
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class Size {
+            private Integer w; // cm
+            private Integer h; // cm
+        }
+
+        @Getter
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class SubwayMeta {
+            private int lineCode;   // 노선
+            private String stationName;
+            private Type type;
+        }
+
+        @Getter
+        @Builder
+        @NoArgsConstructor
+        @AllArgsConstructor
+        public static class BusMeta {
+            private String busType;    // 일반, 광역, ...
+            private String faceType;   // 전면, 측면, 후면 등
+        }
+    }
+
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PlacementListResponse {
+        private String mediaType;
+        private Integer budget;
+        private List<PlacementItem> items;
     }
 
 }

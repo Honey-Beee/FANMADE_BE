@@ -51,9 +51,10 @@ public class Advertisement extends BaseEntity {
         this.currentAmount += amount;
     }
 
-    public void applyFunding(LocalDate start, LocalDate end, int goalAmount) {
+    public void applyFunding(LocalDate start, LocalDate end, int goalAmount, MediaType mediaType) {
         this.startDate = start;
         this.endDate = end;
         this.goalAmount = goalAmount;
+        this.mediaType = mediaType;
     }
 }

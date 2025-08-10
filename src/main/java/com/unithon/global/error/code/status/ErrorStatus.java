@@ -19,7 +19,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // advertisement
     AD_NOT_FOUND(HttpStatus.NOT_FOUND, "AD404", "광고를 찾을 수 없습니다."),
     INVALID_FUNDING_GOAL(HttpStatus.BAD_REQUEST, "AD4001", "목표 금액은 최소 100,000원 이상이어야 합니다."),
-    INVALID_FUNDING_PERIOD(HttpStatus.BAD_REQUEST, "AD4002", "종료일은 시작일 이후여야 합니다.");
+    INVALID_FUNDING_PERIOD(HttpStatus.BAD_REQUEST, "AD4002", "종료일은 시작일 이후여야 합니다."),
+    INVALID_BUDGET(HttpStatus.BAD_REQUEST, "AD4003", "budget 값이 유효하지 않습니다."),
+    INVALID_MEDIA_TYPE(HttpStatus.BAD_REQUEST, "AD4004", "mediaType은 SUBWAY 또는 BUS여야 합니다.");
 
 
     private final HttpStatus httpStatus;

@@ -11,4 +11,6 @@ public interface AdvertisementService {
     Long createDraft(AdvertisementDTO.CreateDraftRequest req);
     AdvertisementDTO.FundingInfoResponse setFunding(Long adId,
                                                     AdvertisementDTO.FundingInfoRequest req);
+    AdvertisementDTO.PlacementListResponse filterPlacements(String mediaType, Integer budget);
+
 }
