@@ -35,7 +35,27 @@ public class DonationServiceImpl implements DonationService {
         Advertisement advertisement = advertisementRepository.findById(advertisementId)
                 .orElseThrow(() -> new RuntimeException("광고를 찾을 수 없습니다. ID: " + advertisementId));
 
-        // 2. Donation 엔티티 생성 및 저장 (INSERT)
+        // 2. 이 광고에 대한 첫 후원인지 확인
+        long donationCount = donationRepository.countByAdvertisement(advertisement);
+        log.info("donationCount :: {}", donationCount);
+
+        if (donationCount == 0) {
+            // 첫 후원일 경우, 특별 규칙을 적용
+            log.info("첫 후원입니다. 생성자 및 5% 규칙을 검사합니다.");
+
+            // 규칙 A: 후원자가 광고 생성자인지 확인
+            if (!advertisement.getUser().getId().equals(userId)) {
+                throw new IllegalArgumentException("첫 후원은 광고 생성자만 할 수 있습니다.");
+            }
+
+            // 규칙 B: 후원 금액이 목표 금액의 5% 이상인지 확인
+            double requiredAmount = advertisement.getGoalAmount() * 0.05;
+            if (requestDTO.getAmount() < requiredAmount) {
+                throw new IllegalArgumentException("첫 후원은 목표 금액의 5% 이상이어야 합니다. 최소 필요 금액: " + (int)requiredAmount + "원");
+            }
+        }
+
+        // 3. Donation 엔티티 생성 및 저장 (INSERT)
         Donation newDonation = Donation.builder()
                 .user(user)
                 .advertisement(advertisement)
@@ -44,7 +64,7 @@ public class DonationServiceImpl implements DonationService {
                 .build();
         donationRepository.save(newDonation);
 
-        // 3. Advertisement 엔티티의 현재 모금액 업데이트 (UPDATE)
+        // 4. Advertisement 엔티티의 현재 모금액 업데이트 (UPDATE)
         advertisement.addCurrentAmount(requestDTO.getAmount());
         advertisementRepository.save(advertisement);
 

@@ -1,5 +1,6 @@
 package com.unithon.domain.donation.repository;
 
+import com.unithon.domain.advertisement.domain.entity.Advertisement;
 import com.unithon.domain.donation.domain.Donation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,4 +33,12 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
             "ORDER BY totalAmount DESC")
     Page<Object[]> findTopDonorsByAdvertisementId(
             @Param("advertisementId") Long advertisementId, Pageable pageable);
+
+
+    /**
+     * 특정 Advertisement 엔티티에 연결된 Donation의 개수를 반환합니다.
+     * @param advertisement Advertisement 엔티티
+     * @return 후원 건수
+     */
+    long countByAdvertisement(Advertisement advertisement);
 }
