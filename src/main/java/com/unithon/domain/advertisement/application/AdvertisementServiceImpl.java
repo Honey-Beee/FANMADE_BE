@@ -2,12 +2,15 @@ package com.unithon.domain.advertisement.application;
 
 import com.unithon.domain.advertisement.converter.AdvertisementConverter;
 import com.unithon.domain.advertisement.domain.entity.Advertisement;
+import com.unithon.domain.advertisement.domain.entity.MediaType;
 import com.unithon.domain.advertisement.domain.entity.Status;
 import com.unithon.domain.advertisement.domain.repository.AdQueryResultInterface;
 import com.unithon.domain.advertisement.domain.repository.AdvertisementRepository;
 import com.unithon.domain.advertisement.dto.AdvertisementDTO;
+import com.unithon.domain.bus.domain.entity.Bus;
 import com.unithon.domain.bus.domain.repository.BusRepository;
 import com.unithon.domain.donation.repository.DonationRepository;
+import com.unithon.domain.subway.domain.entity.Subway;
 import com.unithon.domain.subway.domain.repository.SubwayRepository;
 import com.unithon.domain.user.domain.entity.Artist;
 import com.unithon.domain.user.domain.entity.User;
@@ -192,6 +195,42 @@ public class AdvertisementServiceImpl implements AdvertisementService{
                 .items(items)
                 .build();
     }
+
+    @Override
+    @Transactional
+    public AdvertisementDTO.ChosenPlaceResponse choosePlace(Long adId, AdvertisementDTO.ChoosePlaceRequest req) {
+        Advertisement ad = advertisementRepository.findById(adId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
+
+        MediaType reqType = req.getMediaType();
+
+        if (subwayRepository.existsByAdvertisement_AdvertisementId(adId) ||
+                busRepository.existsByAdvertisement_AdvertisementId(adId)) {
+            throw new GeneralException(ErrorStatus.AD_ALREADY_HAS_PLACE);
+        }
+
+        if ("BUS".equalsIgnoreCase(reqType.toString())) {
+            Bus b = busRepository.findByIdForUpdate(req.getPlaceId())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.PLACE_NOT_FOUND));
+            if (b.getAdvertisement() != null) throw new GeneralException(ErrorStatus.PLACE_ALREADY_ASSIGNED);
+
+            b.assign(ad);
+            return AdvertisementConverter.toChosenFromBus(adId, b);
+
+        } else if ("SUBWAY".equalsIgnoreCase(reqType.toString())) {
+            Subway s = subwayRepository.findByIdForUpdate(req.getPlaceId())
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.PLACE_NOT_FOUND));
+            if (s.getAdvertisement() != null) throw new GeneralException(ErrorStatus.PLACE_ALREADY_ASSIGNED);
+
+            s.assign(ad);
+            return AdvertisementConverter.toChosenFromSubway(adId, s);
+
+        } else {
+            throw new GeneralException(ErrorStatus.INVALID_MEDIA_TYPE);
+        }
+    }
+
+
 
     public Long currentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

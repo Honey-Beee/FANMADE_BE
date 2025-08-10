@@ -12,5 +12,6 @@ public interface AdvertisementService {
     AdvertisementDTO.FundingInfoResponse setFunding(Long adId,
                                                     AdvertisementDTO.FundingInfoRequest req);
     AdvertisementDTO.PlacementListResponse filterPlacements(String mediaType, Integer budget);
+    AdvertisementDTO.ChosenPlaceResponse choosePlace(Long adId, AdvertisementDTO.ChoosePlaceRequest req);
 
 }

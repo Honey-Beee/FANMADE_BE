@@ -189,6 +189,22 @@ public class AdvertisementConverter {
                 .build();
     }
 
+    public static AdvertisementDTO.ChosenPlaceResponse toChosenFromSubway(Long adId, Subway s) {
+        return AdvertisementDTO.ChosenPlaceResponse.builder()
+                .adId(adId)
+                .mediaType("SUBWAY")
+                .placeId(s.getId())
+                .build();
+    }
+
+    public static AdvertisementDTO.ChosenPlaceResponse toChosenFromBus(Long adId, Bus b) {
+        return AdvertisementDTO.ChosenPlaceResponse.builder()
+                .adId(adId)
+                .mediaType("BUS")
+                .placeId(b.getId())
+                .build();
+    }
+
 }
 
 

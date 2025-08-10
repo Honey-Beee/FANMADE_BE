@@ -211,7 +211,6 @@ public class AdvertisementDTO {
         }
     }
 
-
     @Getter
     @Builder
     @NoArgsConstructor
@@ -220,6 +219,25 @@ public class AdvertisementDTO {
         private String mediaType;
         private Integer budget;
         private List<PlacementItem> items;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChoosePlaceRequest {
+        private MediaType mediaType;   // "SUBWAY" | "BUS"
+        private Long placeId;  // Subway.id or Bus.id
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ChosenPlaceResponse {
+        private Long adId;
+        private String mediaType;   // "SUBWAY" | "BUS"
+        private Long placeId;
     }
 
 }

@@ -82,6 +82,16 @@ public class AdvertisementController {
         return BaseResponse.onSuccess(SuccessStatus.PLACEMENT_FILTERED, res);
     }
 
+    @PostMapping("/{advertisementId}/places/choose")
+    public BaseResponse<AdvertisementDTO.ChosenPlaceResponse> choosePlace(
+            @PathVariable Long advertisementId,
+            @RequestBody AdvertisementDTO.ChoosePlaceRequest request
+    ) {
+        AdvertisementDTO.ChosenPlaceResponse res =
+                advertisementService.choosePlace(advertisementId, request);
+        return BaseResponse.onSuccess(SuccessStatus.PLACE_CHOSEN, res);
+    }
+
 
 }
 

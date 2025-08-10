@@ -23,6 +23,7 @@ public enum SuccessStatus implements BaseCode {
     ADVERTISEMENT_DRAFT_CREATED(HttpStatus.CREATED, "ADVERTISEMENT_2003","드래프트가 생성되었습니다."),
     ADVERTISEMENT_FUNDING_SAVED(HttpStatus.OK, "ADVERTISEMENT_2004","펀딩 정보가 저장되었습니다."),
     PLACEMENT_FILTERED(HttpStatus.OK, "ADVERTISEMENT_2005", "광고 매체가 예산 기준으로 필터링되었습니다."),
+    PLACE_CHOSEN(HttpStatus.OK, "ADVERTISEMENT_2006", "광고 매체가 선택되었습니다."),
 
     // Donation
     DONATION_SUCCESS(HttpStatus.OK, "DONATION_2001", "후원 등록 성공"),
