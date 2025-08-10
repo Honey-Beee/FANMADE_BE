@@ -1,6 +1,8 @@
 package com.unithon.domain.advertisement.domain.entity;
 
+import com.unithon.domain.bus.domain.entity.Bus;
 import com.unithon.domain.model.BaseEntity;
+import com.unithon.domain.subway.domain.entity.Subway;
 import com.unithon.domain.user.domain.entity.Artist;
 import com.unithon.domain.user.domain.entity.User;
 import jakarta.persistence.*;
@@ -46,6 +48,18 @@ public class Advertisement extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Purpose purpose; // 데뷔, 생일, 컴백, 기타
+
+    /**
+     * 이 광고에 연결된 Subway 정보입니다.
+     */
+    @OneToOne(mappedBy = "advertisement", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Subway subway;
+
+    /**
+     * 이 광고에 연결된 Bus 정보입니다.
+     */
+    @OneToOne(mappedBy = "advertisement", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Bus bus;
 
     public void addCurrentAmount(Long amount) {
         this.currentAmount += amount;

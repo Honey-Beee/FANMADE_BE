@@ -15,8 +15,25 @@ import java.util.List;
 import java.util.Optional;
 
 public interface AdvertisementRepository extends JpaRepository<Advertisement, Long> {
+    // --- [수정] N+1 문제 해결을 위해 모든 연관 엔티티를 JOIN FETCH ---
+    @Query(value = "SELECT ad FROM Advertisement ad " +
+            "JOIN FETCH ad.artistId " +
+            "LEFT JOIN FETCH ad.subway s " + // Subway 정보 함께 로드
+            "LEFT JOIN FETCH s.subwayStation " + // Subway의 역 정보도 함께 로드
+            "LEFT JOIN FETCH ad.bus", // Bus 정보 함께 로드
+            countQuery = "SELECT COUNT(ad) FROM Advertisement ad")
+    @Override
+    Page<Advertisement> findAll(Pageable pageable);
+
     // --- 광고 목록 조회를 위한 기본 메서드 ---
-    // status 필터링이 필요하므로, 상태별로 페이지를 찾는 메서드를 정의합니다.
+    // status 필터링이 필요 -> 수정
+    @Query(value = "SELECT ad FROM Advertisement ad " +
+            "JOIN FETCH ad.artistId " +
+            "LEFT JOIN FETCH ad.subway s " +
+            "LEFT JOIN FETCH s.subwayStation " +
+            "LEFT JOIN FETCH ad.bus " +
+            "WHERE ad.status = :status",
+            countQuery = "SELECT COUNT(ad) FROM Advertisement ad WHERE ad.status = :status")
     Page<Advertisement> findByStatus(Status status, Pageable pageable);
 
     // --- 요약 정보 조회를 위한 메서드 ---

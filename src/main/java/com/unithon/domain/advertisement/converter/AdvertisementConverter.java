@@ -61,6 +61,20 @@ public class AdvertisementConverter {
             progressPercentage = (int) (((double) ad.getCurrentAmount() / ad.getGoalAmount()) * 100);
         }
 
+        // --- [추가] 위치 정보 생성 로직 ---
+        String location = "";
+        Subway subway = ad.getSubway();
+        Bus bus = ad.getBus();
+
+        if (subway != null && subway.getSubwayStation() != null) {
+            // "신촌역" + " " + "2" + "호선" -> "신촌역 2호선"
+            location = subway.getSubwayStation().getName() + " " + subway.getLineCode() + "호선";
+        } else if (bus != null) {
+            // "N" + " 버스" -> "N 버스"
+            location = bus.getBusNumber() + " 버스";
+        }
+
+
         return AdvertisementDTO.AdvertisementCard.builder()
                 .advertisementId(ad.getAdvertisementId())
                 .purpose(ad.getPurpose())
@@ -71,6 +85,7 @@ public class AdvertisementConverter {
                 .donorCount(donorCount) // 계산된 값을 직접 주입
                 .remainingDays(remainingDays)
                 .imageUrl(ad.getImageUrl())
+                .location(location) // <-- 추가
                 .build();
     }
 
