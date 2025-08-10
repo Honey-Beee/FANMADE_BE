@@ -29,12 +29,14 @@ public enum SuccessStatus implements BaseCode {
 
     // Donation
     DONATION_SUCCESS(HttpStatus.OK, "DONATION_2001", "후원 등록 성공"),
+    TOP_DONOR_LIST_SUCCESS(HttpStatus.OK, "DONATION_4002", "후원자 top3 조회 성공"),
 
     // Artist
     ARTIST_SEARCH_SUCCESS(HttpStatus.OK, "ARTIST_2001", "아티스트 검색 성공"),
-    ARTIST_RECOMMEND_SUCCESS(HttpStatus.OK, "ARTIST201", "아티스트 추천 목록 조회 성공")
+    ARTIST_RECOMMEND_SUCCESS(HttpStatus.OK, "ARTIST201", "아티스트 추천 목록 조회 성공"),
 
-
+    // Comment
+    COMMENT_CREATE_SUCCESS(HttpStatus.OK, "COMMENT_6001", "댓글 등록 성공")
     ;
 
     private final HttpStatus httpStatus;
