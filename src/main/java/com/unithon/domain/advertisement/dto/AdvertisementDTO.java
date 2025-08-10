@@ -106,6 +106,7 @@ public class AdvertisementDTO {
         private String description;
         private String startDate;
         private String endDate;
+        private String location; // 추가
     }
 
     /**
