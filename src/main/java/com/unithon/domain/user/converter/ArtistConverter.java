@@ -21,4 +21,20 @@ public class ArtistConverter {
                 .map(ArtistConverter::toArtistResponse)
                 .collect(Collectors.toList());
     }
+
+    public static ArtistDTO.RecommendArtistResponse toRecommendArtistResponse(Artist artist) {
+        if (artist == null) return null;
+        return ArtistDTO.RecommendArtistResponse.builder()
+                .artistId(artist.getId())
+                .name(artist.getName())
+                .imageUrl(artist.getImageUrl())
+                .build();
+    }
+
+    public static List<ArtistDTO.RecommendArtistResponse> toRecommendArtistResponseList(List<Artist> artistList) {
+        return artistList == null ? List.of()
+                : artistList.stream()
+                .map(ArtistConverter::toRecommendArtistResponse)
+                .collect(Collectors.toList());
+    }
 }

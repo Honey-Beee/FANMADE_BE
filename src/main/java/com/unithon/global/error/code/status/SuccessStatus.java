@@ -32,6 +32,7 @@ public enum SuccessStatus implements BaseCode {
 
     // Artist
     ARTIST_SEARCH_SUCCESS(HttpStatus.OK, "ARTIST_2001", "아티스트 검색 성공"),
+    ARTIST_RECOMMEND_SUCCESS(HttpStatus.OK, "ARTIST201", "아티스트 추천 목록 조회 성공")
 
 
     ;
