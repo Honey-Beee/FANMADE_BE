@@ -13,6 +13,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/advertisements/{advertisementId}/donations")
@@ -41,6 +43,18 @@ public class DonationController {
         // 3. 성공 응답 반환
         return BaseResponse.onSuccess(SuccessStatus.DONATION_SUCCESS, response);
     }
+
+    /**
+     * 특정 광고의 Top 3 후원자 랭킹 조회 (인증 불필요)
+     */
+    @GetMapping("/top-donors")
+    public BaseResponse<List<DonationDTO.TopDonorResponse>> getTop3Donors(
+            @PathVariable Long advertisementId
+    ) {
+        List<DonationDTO.TopDonorResponse> response = donationService.getTop3Donors(advertisementId);
+        return BaseResponse.onSuccess(SuccessStatus.TOP_DONOR_LIST_SUCCESS, response);
+    }
+
 
 
 }

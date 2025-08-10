@@ -29,6 +29,21 @@ public class DonationDTO {
     public static class DonationResponse {
         private Long createdDonationId;
     }
+
+
+    /**
+     * Top 3 후원자 랭킹 응답을 위한 DTO
+     */
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TopDonorResponse {
+        private int rank;           // 순위 (1, 2, 3)
+        private String userEmail;   // 유저 이메일 (또는 닉네임)
+        private Long totalAmount;   // 총 후원 금액
+    }
 }
+
 
 

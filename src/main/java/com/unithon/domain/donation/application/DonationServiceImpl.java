@@ -9,10 +9,18 @@ import com.unithon.domain.donation.repository.DonationRepository;
 import com.unithon.domain.user.domain.entity.User;
 import com.unithon.domain.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DonationServiceImpl implements DonationService {
     private final UserRepository userRepository;
     private final AdvertisementRepository advertisementRepository;
@@ -42,6 +50,30 @@ public class DonationServiceImpl implements DonationService {
 
         // 5. 최종 응답 DTO 생성 및 반환
         return DonationConverter.toDonationResponse(newDonation);
+    }
+
+    @Override
+    public List<DonationDTO.TopDonorResponse> getTop3Donors(Long advertisementId) {
+        // 1. "전체 결과 중 상위 3개"를 의미하는 Pageable 객체 생성
+        PageRequest pageable = PageRequest.of(0, 3);
+
+        // 2. Repository를 호출하여 정렬 및 그룹화가 완료된 상위 3개의 데이터를 조회
+        Page<Object[]> topDonorsPage =
+                donationRepository.findTopDonorsByAdvertisementId(advertisementId, pageable);
+        log.info("topDonerService :: toDonorsPage :{}, list :: {}" , topDonorsPage, topDonorsPage.get().collect(Collectors.toList()));
+
+        List<Object[]> topDonors = topDonorsPage.getContent();
+
+        // 3. 조회된 결과 리스트에 1, 2, 3 순위를 부여하면서 DTO로 변환
+        return IntStream.range(0, topDonors.size())
+                .mapToObj(index -> {
+                    Object[] row = topDonors.get(index);
+                    User user = (User) row[0];
+                    Long totalAmount = (Long) row[1];
+                    // Converter를 사용하여 DTO 생성 (순위는 1부터 시작)
+                    return DonationConverter.toTopDonorResponse(index + 1, user, totalAmount);
+                })
+                .collect(Collectors.toList());
     }
 
 }
