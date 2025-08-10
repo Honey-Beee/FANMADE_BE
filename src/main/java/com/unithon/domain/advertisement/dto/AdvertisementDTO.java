@@ -302,5 +302,14 @@ public class AdvertisementDTO {
         }
     }
 
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SubmitResponse {
+        private Long adId;
+        private String status;
+    }
+
 
 }

@@ -100,6 +100,14 @@ public class AdvertisementController {
         return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_SUMMARY_SUCCESS, res);
     }
 
+    @PostMapping("/{advertisementId}/submit")
+    public BaseResponse<AdvertisementDTO.SubmitResponse> submitAdvertisement(
+            @PathVariable Long advertisementId
+    ) {
+        AdvertisementDTO.SubmitResponse res = advertisementService.submitAdvertisement(advertisementId);
+        return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_SUBMITTED, res);
+    }
+
 }
 
 

@@ -25,7 +25,7 @@ public enum SuccessStatus implements BaseCode {
     PLACEMENT_FILTERED(HttpStatus.OK, "ADVERTISEMENT_2005", "광고 매체가 예산 기준으로 필터링되었습니다."),
     PLACE_CHOSEN(HttpStatus.OK, "ADVERTISEMENT_2006", "광고 매체가 선택되었습니다."),
     ADVERTISEMENT_SUMMARY_SUCCESS(HttpStatus.OK, "ADVERTISEMENT_2007", "광고 최종 요약 조회 성공"),
-
+    ADVERTISEMENT_SUBMITTED(HttpStatus.OK, "ADVERTISEMENT_2006", "광고가 FUNDING 상태로 전환되었습니다."),
 
     // Donation
     DONATION_SUCCESS(HttpStatus.OK, "DONATION_2001", "후원 등록 성공"),

@@ -57,4 +57,6 @@ public class Advertisement extends BaseEntity {
         this.goalAmount = goalAmount;
         this.mediaType = mediaType;
     }
+
+    public void changeStatus(Status newStatus) {this.status = newStatus;}
 }

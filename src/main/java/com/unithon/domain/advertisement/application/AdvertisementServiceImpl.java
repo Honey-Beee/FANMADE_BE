@@ -250,7 +250,30 @@ public class AdvertisementServiceImpl implements AdvertisementService{
         throw new GeneralException(ErrorStatus.PLACE_NOT_FOUND);
     }
 
+    @Override
+    @Transactional
+    public AdvertisementDTO.SubmitResponse submitAdvertisement(Long adId) {
+        Advertisement ad = advertisementRepository.findById(adId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
 
+        if (ad.getMediaType() == MediaType.SUBWAY) {
+            if (subwayRepository.findByAdvertisementId(adId) == null) {
+                throw new GeneralException(ErrorStatus.PLACE_NOT_FOUND);
+            }
+        } else if (ad.getMediaType() == MediaType.BUS) {
+            if (busRepository.findByAdvertisementId(adId) == null) {
+                throw new GeneralException(ErrorStatus.PLACE_NOT_FOUND);
+            }
+        }
+
+        ad.changeStatus(Status.FUNDING);
+        advertisementRepository.save(ad);
+
+        return AdvertisementDTO.SubmitResponse.builder()
+                .adId(ad.getAdvertisementId())
+                .status(ad.getStatus().name())
+                .build();
+    }
 
     public Long currentUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
