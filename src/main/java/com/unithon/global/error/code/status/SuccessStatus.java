@@ -29,7 +29,8 @@ public enum SuccessStatus implements BaseCode {
     ARTIST_SEARCH_SUCCESS(HttpStatus.OK, "ARTIST_5001", "아티스트 검색 성공"),
 
     // Comment
-    COMMENT_CREATE_SUCCESS(HttpStatus.OK, "COMMENT_6001", "댓글 등록 성공")
+    COMMENT_CREATE_SUCCESS(HttpStatus.OK, "COMMENT_6001", "댓글 등록 성공"),
+    COMMENT_LIST_SUCCESS(HttpStatus.OK, "COMMENT_6002", "댓글 조회 성공")
 
     ;
 
