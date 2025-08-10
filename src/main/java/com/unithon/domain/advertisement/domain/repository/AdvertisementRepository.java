@@ -62,13 +62,14 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
 
 
     /**
-     * 광고 상세 정보와 해당 광고의 총 후원자 수를 한 번의 쿼리로 조회
-     * @param advertisementId 조회할 광고의 ID
-     * @return Advertisement 엔티티와 Long 타입의 후원자 수를 담은 Object 배열
+     * [수정] 광고 상세 정보 조회 시, 위치 정보(Subway, Bus)까지 JOIN FETCH로 함께 가져옵니다.
      */
     @Query("SELECT ad, COUNT(d.id) " +
             "FROM Advertisement ad " +
-            "LEFT JOIN ad.artistId " + // Artist 정보를 즉시 함께 로딩하여 N+1 문제 방지
+            "LEFT JOIN FETCH ad.artistId " +
+            "LEFT JOIN FETCH ad.subway s " +
+            "LEFT JOIN FETCH s.subwayStation " +
+            "LEFT JOIN FETCH ad.bus " +
             "LEFT JOIN Donation d ON d.advertisement = ad " +
             "WHERE ad.advertisementId = :advertisementId " +
             "GROUP BY ad.advertisementId")

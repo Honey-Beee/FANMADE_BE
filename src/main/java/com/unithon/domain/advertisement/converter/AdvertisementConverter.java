@@ -101,6 +101,19 @@ public class AdvertisementConverter {
             default -> "기타";
         };
 
+        // --- [추가] 위치 정보 생성 로직 ---
+        String location = "";
+        Subway subway = ad.getSubway();
+        Bus bus = ad.getBus();
+
+        if (subway != null && subway.getSubwayStation() != null) {
+            // "신촌역" + " " + "2" + "호선" -> "신촌역 2호선"
+            location = subway.getSubwayStation().getName() + " " + subway.getLineCode() + "호선";
+        } else if (bus != null) {
+            // "N" + " 버스" -> "N 버스"
+            location = bus.getBusNumber() + " 버스";
+        }
+
         // 2. 남은 기간 계산
         long remainingDays = ChronoUnit.DAYS.between(LocalDate.now(), ad.getEndDate());
         if (remainingDays < 0) remainingDays = 0;
@@ -127,6 +140,7 @@ public class AdvertisementConverter {
                 .description(ad.getDescription())
                 .startDate(ad.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE)) // YYYY-MM-DD 형식
                 .endDate(ad.getEndDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .location(location) // 위치 필드 추가
                 .build();
 
         AdvertisementDTO.FundingStatus fundingStatus = AdvertisementDTO.FundingStatus.builder()
