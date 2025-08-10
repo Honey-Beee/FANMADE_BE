@@ -32,6 +32,7 @@ public class Bus extends BaseEntity {
     private int price;
     private Integer sizeWidthCm;
     private Integer sizeHeightCm;
+    private String busNumber;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advertisement_id")
