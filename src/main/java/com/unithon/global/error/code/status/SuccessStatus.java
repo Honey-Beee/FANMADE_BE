@@ -26,7 +26,10 @@ public enum SuccessStatus implements BaseCode {
     TOP_DONOR_LIST_SUCCESS(HttpStatus.OK, "DONATION_4002", "후원자 top3 조회 성공"),
 
     // Artist
-    ARTIST_SEARCH_SUCCESS(HttpStatus.OK, "ARTIST_5001", "아티스트 검색 성공")
+    ARTIST_SEARCH_SUCCESS(HttpStatus.OK, "ARTIST_5001", "아티스트 검색 성공"),
+
+    // Comment
+    COMMENT_CREATE_SUCCESS(HttpStatus.OK, "COMMENT_6001", "댓글 등록 성공")
 
     ;
 
