@@ -38,7 +38,10 @@ public enum SuccessStatus implements BaseCode {
     // Comment
 
     COMMENT_CREATE_SUCCESS(HttpStatus.OK, "COMMENT_6001", "댓글 등록 성공"),
-    COMMENT_LIST_SUCCESS(HttpStatus.OK, "COMMENT_6002", "댓글 조회 성공")
+    COMMENT_LIST_SUCCESS(HttpStatus.OK, "COMMENT_6002", "댓글 조회 성공"),
+
+    // S3
+    FILE_UPLOAD_SUCCESS(HttpStatus.OK, "S3_2001", "S3 버킷 이미지 업로드 성공")
 
     ;
 
