@@ -74,11 +74,10 @@ public class AdvertisementController {
 
     @GetMapping("/{advertisementId}/places/filter")
     public BaseResponse<AdvertisementDTO.PlacementListResponse> filterPlacements(
-            @RequestParam String mediaType,
             @RequestParam Integer budget
     ) {
         AdvertisementDTO.PlacementListResponse res =
-                advertisementService.filterPlacements(mediaType, budget);
+                advertisementService.filterPlacements(budget);
         return BaseResponse.onSuccess(SuccessStatus.PLACEMENT_FILTERED, res);
     }
 

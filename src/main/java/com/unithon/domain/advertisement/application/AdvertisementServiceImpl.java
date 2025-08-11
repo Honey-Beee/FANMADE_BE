@@ -165,32 +165,23 @@ public class AdvertisementServiceImpl implements AdvertisementService{
             throw new GeneralException(ErrorStatus.INVALID_FUNDING_PERIOD);
         }
 
-        ad.applyFunding(req.getStartDate(), req.getEndDate(), req.getGoalAmount(), req.getMediaType());
+        ad.applyFunding(req.getStartDate(), req.getEndDate(), req.getGoalAmount());
 
         return AdvertisementConverter.toFundingInfoResponse(ad);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public AdvertisementDTO.PlacementListResponse filterPlacements(String mediaType, Integer budget) {
+    public AdvertisementDTO.PlacementListResponse filterPlacements(Integer budget) {
 
-        if (!"SUBWAY".equalsIgnoreCase(mediaType) && !"BUS".equalsIgnoreCase(mediaType)) {
-            throw new GeneralException(ErrorStatus.INVALID_MEDIA_TYPE);
-        }
+        var top9Subway = subwayRepository.findNearestToBudget(budget, PageRequest.of(0, 9));
+        var top9Bus    = busRepository.findNearestToBudget(budget, PageRequest.of(0, 9));
 
-        List<AdvertisementDTO.PlacementItem> items;
-        if ("SUBWAY".equalsIgnoreCase(mediaType)) {
-            items = subwayRepository.findWithinBudget(budget).stream()
-                    .map(AdvertisementConverter::toItem)
-                    .toList();
-        } else {
-            items = busRepository.findWithinBudget(budget).stream()
-                    .map(AdvertisementConverter::toItem)
-                    .toList();
-        }
+        List<AdvertisementDTO.PlacementItem> items = new ArrayList<>();
+        items.addAll(top9Subway.stream().map(AdvertisementConverter::toItem).toList());
+        items.addAll(top9Bus.stream().map(AdvertisementConverter::toItem).toList());
 
         return AdvertisementDTO.PlacementListResponse.builder()
-                .mediaType(mediaType.toUpperCase())
                 .budget(budget)
                 .items(items)
                 .build();

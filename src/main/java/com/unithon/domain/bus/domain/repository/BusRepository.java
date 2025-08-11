@@ -2,6 +2,7 @@ package com.unithon.domain.bus.domain.repository;
 
 import com.unithon.domain.bus.domain.entity.Bus;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,7 @@ public interface BusRepository extends JpaRepository<Bus, Long> {
 
     @Query("select b from Bus b where b.advertisement.advertisementId = :adId")
     Bus findByAdvertisementId(@Param("adId") Long adId);
+
+    @Query("SELECT b FROM Bus b ORDER BY ABS(b.price - :budget) ASC")
+    List<Bus> findNearestToBudget(@Param("budget") Integer budget, Pageable pageable);
 }

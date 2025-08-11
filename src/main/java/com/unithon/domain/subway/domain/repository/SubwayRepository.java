@@ -2,6 +2,7 @@ package com.unithon.domain.subway.domain.repository;
 
 import com.unithon.domain.subway.domain.entity.Subway;
 import jakarta.persistence.LockModeType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,7 @@ public interface SubwayRepository extends JpaRepository<Subway, Long> {
 
     @Query("select s from Subway s where s.advertisement.advertisementId = :adId")
     Subway findByAdvertisementId(@Param("adId") Long adId);
+
+    @Query("SELECT s FROM Subway s ORDER BY ABS(s.price - :budget) ASC")
+    List<Subway> findNearestToBudget(@Param("budget") Integer budget, Pageable pageable);
 }

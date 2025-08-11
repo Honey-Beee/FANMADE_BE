@@ -23,6 +23,10 @@ public class Bus extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
+    private Route route;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private FaceType face; // 차도면, 인도면, 후면 등
 
     @Enumerated(EnumType.STRING)
