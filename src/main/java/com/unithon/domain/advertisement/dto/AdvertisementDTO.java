@@ -63,6 +63,7 @@ public class AdvertisementDTO {
         private String title;
         private int progressPercentage;   // 진행률
         private int currentAmount;        // 현재 모금액
+        private int goalAmount;
         private Long donorCount;          // 참여자 수
         private Long remainingDays;       // 남은 기간
         private String imageUrl;

@@ -134,6 +134,7 @@ public class AdvertisementConverter {
                 .title(ad.getName())
                 .progressPercentage(progressPercentage)
                 .currentAmount(ad.getCurrentAmount())
+                .goalAmount(ad.getGoalAmount()) // <--- 이 한 줄을 빌더에 추가해주세요.
                 .donorCount(donorCount)
                 .remainingDays(remainingDays)
                 .imageUrl(ad.getImageUrl())
