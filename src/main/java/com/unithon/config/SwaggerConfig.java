@@ -40,7 +40,6 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .addServersItem(new Server().url("http://localhost:8080")) // 추가적인 서버 URL 설정 가능
                 .addServersItem(new Server().url("http://3.27.206.216:8080"))
-                .addServersItem(new Server())
                 .info(info)
                 .addSecurityItem(securityRequirement)
                 .components(components);
