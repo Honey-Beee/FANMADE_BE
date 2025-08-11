@@ -178,7 +178,6 @@ public class AdvertisementConverter {
     public static AdvertisementDTO.FundingInfoResponse toFundingInfoResponse(Advertisement ad) {
         return AdvertisementDTO.FundingInfoResponse.builder()
                 .adId(ad.getAdvertisementId())
-                .mediaType(ad.getMediaType())
                 .startDate(ad.getStartDate())
                 .endDate(ad.getEndDate())
                 .goalAmount(ad.getGoalAmount())
@@ -187,7 +186,6 @@ public class AdvertisementConverter {
 
     public static AdvertisementDTO.PlacementItem toItem(Subway s) {
         return AdvertisementDTO.PlacementItem.builder()
-                .type("SUBWAY")
                 .id(s.getId())
                 .price(s.getPrice())
                 .title(s.getLineCode() + "호선 " + s.getSubwayStation().getName())
@@ -205,7 +203,6 @@ public class AdvertisementConverter {
 
     public static AdvertisementDTO.PlacementItem toItem(Bus b) {
         return AdvertisementDTO.PlacementItem.builder()
-                .type("BUS")
                 .id(b.getId())
                 .price(b.getPrice())
                 .title("버스 " + b.getBusType() + " / " + b.getFace())
@@ -215,6 +212,8 @@ public class AdvertisementConverter {
                         AdvertisementDTO.PlacementItem.BusMeta.builder()
                                 .busType(b.getBusType() != null ? b.getBusType().name() : null)
                                 .faceType(b.getFace() != null ? b.getFace().name() : null)
+                                .route(b.getRoute().name())
+                                .busNumber(b.getBusNumber())
                                 .build()
                 )
                 .build();
@@ -240,10 +239,11 @@ public class AdvertisementConverter {
         return AdvertisementDTO.SummaryResponse.builder()
                 .adId(ad.getAdvertisementId())
                 .artist(AdvertisementDTO.SummaryResponse.ArtistSummary.builder()
-                        .artistId(ad.getArtistId().getId())
-                        .artistName(ad.getArtistId().getName())
-                        .artistImageUrl(ad.getArtistId().getImageUrl())
-                        .build())
+                            .artistId(ad.getArtistId().getId())
+                            .artistName(ad.getArtistId().getName())
+                            .artistImageUrl(ad.getArtistId().getImageUrl())
+                            .artistGroupName(ad.getArtistId().getGroupName())
+                            .build())
                 .project(AdvertisementDTO.SummaryResponse.ProjectSummary.builder()
                         .purpose(ad.getPurpose()!=null ? ad.getPurpose().name() : null)
                         .startDate(ad.getStartDate()!=null? ad.getStartDate().toString(): null)
@@ -283,6 +283,8 @@ public class AdvertisementConverter {
                         .grade(b.getGrade()!=null? b.getGrade().name(): null)
                         .busType(b.getBusType()!=null? b.getBusType().name(): null)
                         .faceType(b.getFace()!=null? b.getFace().name(): null)
+                        .route(b.getRoute()!=null? b.getRoute().name(): null)
+                        .busNumber(b.getBusNumber())
                         .price(b.getPrice())
                         .sizeWidthCm(b.getSizeWidthCm())
                         .sizeHeightCm(b.getSizeHeightCm())

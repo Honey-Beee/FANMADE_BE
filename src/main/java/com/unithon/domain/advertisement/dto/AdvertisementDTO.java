@@ -153,7 +153,6 @@ public class AdvertisementDTO {
     public static class FundingInfoRequest {
         private LocalDate startDate;
         private LocalDate endDate;
-        private MediaType mediaType;
         private Integer goalAmount;  // 최소 100000 권장
     }
 
@@ -165,7 +164,6 @@ public class AdvertisementDTO {
         private Long adId;
         private LocalDate startDate;
         private LocalDate endDate;
-        private MediaType mediaType;
         private Integer goalAmount;
     }
 
@@ -174,7 +172,6 @@ public class AdvertisementDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PlacementItem {
-        private String type;        // SUBWAY | BUS
         private Long id;
         private Integer price;
         private String title;       // 화면 표시용
@@ -211,8 +208,10 @@ public class AdvertisementDTO {
         @NoArgsConstructor
         @AllArgsConstructor
         public static class BusMeta {
-            private String busType;    // 일반, 광역, ...
-            private String faceType;   // 전면, 측면, 후면 등
+            private String busType;
+            private String faceType;
+            private String route;
+            private String busNumber;
         }
     }
 
@@ -221,7 +220,6 @@ public class AdvertisementDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PlacementListResponse {
-        private String mediaType;
         private Integer budget;
         private List<PlacementItem> items;
     }
@@ -268,6 +266,7 @@ public class AdvertisementDTO {
             private Long artistId;
             private String artistName;
             private String artistImageUrl;
+            private String artistGroupName;
         }
 
         @Getter
@@ -301,6 +300,8 @@ public class AdvertisementDTO {
             private String grade;       // SSA/SA/A
             private String busType;     // A형/B형/...
             private String faceType;    // 차도면/인도면/후면/...
+            private String route;
+            private String busNumber;
             private Integer price;
             private Integer sizeWidthCm;
             private Integer sizeHeightCm;
