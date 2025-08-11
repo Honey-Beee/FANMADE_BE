@@ -11,7 +11,7 @@ public interface AdvertisementService {
     Long createDraft(AdvertisementDTO.CreateDraftRequest req);
     AdvertisementDTO.FundingInfoResponse setFunding(Long adId,
                                                     AdvertisementDTO.FundingInfoRequest req);
-    AdvertisementDTO.PlacementListResponse filterPlacements(Integer budget);
+    AdvertisementDTO.PlacementListResponse filterPlacements(Long adId);
     AdvertisementDTO.ChosenPlaceResponse choosePlace(Long adId, AdvertisementDTO.ChoosePlaceRequest req);
     AdvertisementDTO.SummaryResponse getSummary(Long adId);
     AdvertisementDTO.SubmitResponse submitAdvertisement(Long adId);

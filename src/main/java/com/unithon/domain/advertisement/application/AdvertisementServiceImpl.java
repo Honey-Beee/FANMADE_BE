@@ -172,17 +172,25 @@ public class AdvertisementServiceImpl implements AdvertisementService{
 
     @Override
     @Transactional(readOnly = true)
-    public AdvertisementDTO.PlacementListResponse filterPlacements(Integer budget) {
+    public AdvertisementDTO.PlacementListResponse filterPlacements(Long adId) {
 
-        var top9Subway = subwayRepository.findNearestToBudget(budget, PageRequest.of(0, 9));
-        var top9Bus    = busRepository.findNearestToBudget(budget, PageRequest.of(0, 9));
+        Advertisement ad = advertisementRepository.findById(adId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
+
+        long days = java.time.temporal.ChronoUnit.DAYS.between(ad.getStartDate(), ad.getEndDate()) + 1;
+        double periodRatio = days / 30.0;
+
+        int effectiveMonthlyBudget = (int) Math.round(ad.getGoalAmount() / periodRatio);
+
+        var top9Subway = subwayRepository.findNearestToBudget(effectiveMonthlyBudget, PageRequest.of(0, 9));
+        var top9Bus    = busRepository.findNearestToBudget(effectiveMonthlyBudget, PageRequest.of(0, 9));
 
         List<AdvertisementDTO.PlacementItem> items = new ArrayList<>();
         items.addAll(top9Subway.stream().map(AdvertisementConverter::toItem).toList());
         items.addAll(top9Bus.stream().map(AdvertisementConverter::toItem).toList());
 
         return AdvertisementDTO.PlacementListResponse.builder()
-                .budget(budget)
+                .budget(effectiveMonthlyBudget)
                 .items(items)
                 .build();
     }
