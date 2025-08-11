@@ -8,6 +8,8 @@ import com.unithon.domain.donation.dto.DonationDTO;
 import com.unithon.domain.donation.repository.DonationRepository;
 import com.unithon.domain.user.domain.entity.User;
 import com.unithon.domain.user.domain.repository.UserRepository;
+import com.unithon.global.error.code.status.ErrorStatus;
+import com.unithon.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -45,13 +47,13 @@ public class DonationServiceImpl implements DonationService {
 
             // 규칙 A: 후원자가 광고 생성자인지 확인
             if (!advertisement.getUser().getId().equals(userId)) {
-                throw new IllegalArgumentException("첫 후원은 광고 생성자만 할 수 있습니다.");
+                throw new GeneralException(ErrorStatus.DONATION_FIRST_ONLY_CREATER);
             }
 
             // 규칙 B: 후원 금액이 목표 금액의 5% 이상인지 확인
             double requiredAmount = advertisement.getGoalAmount() * 0.05;
             if (requestDTO.getAmount() < requiredAmount) {
-                throw new IllegalArgumentException("첫 후원은 목표 금액의 5% 이상이어야 합니다. 최소 필요 금액: " + (int)requiredAmount + "원");
+                throw new GeneralException(ErrorStatus.DONATION_MIN_PRICE);
             }
         }
 

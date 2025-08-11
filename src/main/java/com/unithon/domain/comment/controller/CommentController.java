@@ -5,7 +5,9 @@ import com.unithon.domain.comment.dto.CommentDTO;
 import com.unithon.domain.user.domain.entity.User;
 import com.unithon.domain.user.domain.repository.UserRepository;
 import com.unithon.global.common.BaseResponse;
+import com.unithon.global.error.code.status.ErrorStatus;
 import com.unithon.global.error.code.status.SuccessStatus;
+import com.unithon.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,7 +35,7 @@ public class CommentController {
         // 1. 인증 정보에서 이메일을 가져와 User 엔티티 조회
         String email = userDetails.getUsername();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("인증된 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 2. 서비스 로직 호출
         CommentDTO.CommentResponse response =
