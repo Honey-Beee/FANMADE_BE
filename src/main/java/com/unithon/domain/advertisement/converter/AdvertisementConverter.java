@@ -78,7 +78,8 @@ public class AdvertisementConverter {
         return AdvertisementDTO.AdvertisementCard.builder()
                 .advertisementId(ad.getAdvertisementId())
                 .purpose(ad.getPurpose())
-                .artistName(ad.getArtistId().getName())
+                .groupName(ad.getArtistId().getGroupName())
+                .artistMemberName(ad.getArtistId().getName())
                 .title(ad.getName())
                 .progressPercentage(progressPercentage)
                 .currentAmount(ad.getCurrentAmount())
@@ -131,7 +132,8 @@ public class AdvertisementConverter {
 
         AdvertisementDTO.ArtistInfo artistInfo = AdvertisementDTO.ArtistInfo.builder()
                 .artistId(ad.getArtistId().getId())
-                .name(ad.getArtistId().getName())
+                .groupName(ad.getArtistId().getGroupName())
+                .artistMemberName(ad.getArtistId().getName())
                 .profileImageUrl(ad.getArtistId().getImageUrl()) // Artist 엔티티에 imageUrl 필드가 있다고 가정
                 .build();
 

@@ -21,8 +21,10 @@ public class Artist extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String name; // 멤버명 -- 수빈
 
     private String imageUrl;
+
+    private String groupName; // 그룹명 -- 투바투
 
 }

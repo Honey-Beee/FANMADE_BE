@@ -44,7 +44,9 @@ public class AdvertisementDTO {
     public static class AdvertisementCard {
         private Long advertisementId;
         private Purpose purpose;          // 생일 광고, 기타 응원 등
-        private String artistName;
+        // [수정] artistName 필드를 groupName과 artistMemberName으로 분리
+        private String groupName;          // 아티스트 그룹명 (예: 투모로우바이투게더)
+        private String artistMemberName;   // 아티스트 멤버명 (예: 수빈) - 개인 광고가 아니면 null
         private String title;
         private int progressPercentage;   // 진행률
         private int currentAmount;        // 현재 모금액
@@ -92,7 +94,9 @@ public class AdvertisementDTO {
     @Getter
     public static class ArtistInfo {
         private Long artistId;
-        private String name;
+        // [수정] artistName 필드를 groupName과 artistMemberName으로 분리
+        private String groupName;          // 아티스트 그룹명 (예: 투모로우바이투게더)
+        private String artistMemberName;   // 아티스트 멤버명 (예: 수빈) - 개인 광고가 아니면 null
         private String profileImageUrl;
     }
 
