@@ -25,7 +25,18 @@ public enum ErrorStatus implements BaseErrorCode {
     PLACE_NOT_FOUND(HttpStatus.NOT_FOUND, "AD4041", "선택한 광고 매체를 찾을 수 없습니다."),
     PLACE_ALREADY_ASSIGNED(HttpStatus.CONFLICT, "AD4091", "이미 다른 광고에 배정된 매체입니다."),
     AD_ALREADY_HAS_PLACE(HttpStatus.CONFLICT, "AD4092", "해당 광고에 이미 배정된 매체가 있습니다."),
-    AD_STATUS_INVALID(HttpStatus.BAD_REQUEST, "AD4005", "현재 상태에서는 장소를 배정할 수 없습니다.");
+    AD_STATUS_INVALID(HttpStatus.BAD_REQUEST, "AD4005", "현재 상태에서는 장소를 배정할 수 없습니다."),
+
+    // donation
+    DONATION_FIRST_ONLY_CREATER(HttpStatus.BAD_REQUEST, "DON5001", "첫 후원은 광고 생성자만 할 수 있습니다."),
+    DONATION_MIN_PRICE(HttpStatus.BAD_REQUEST, "DON5002", "첫 후원은 목표 금액의 5% 이상이어야 합니다"),
+
+    // user
+    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER_6001", "인증된 사용자를 찾을 수 없습니다.");
+
+    ;
+
+
 
 
 

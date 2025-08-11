@@ -1,12 +1,15 @@
 package com.unithon.domain.donation.controller;
 
+import com.unithon.domain.advertisement.domain.entity.Advertisement;
 import com.unithon.domain.donation.application.DonationService;
 import com.unithon.domain.donation.dto.DonationDTO;
 import com.unithon.domain.user.domain.entity.User;
 import com.unithon.domain.user.domain.repository.UserRepository;
 import com.unithon.domain.user.dto.UserDTO;
 import com.unithon.global.common.BaseResponse;
+import com.unithon.global.error.code.status.ErrorStatus;
 import com.unithon.global.error.code.status.SuccessStatus;
+import com.unithon.global.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,10 +34,11 @@ public class DonationController {
             @RequestBody DonationDTO.DonationRequest requestDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
 
+
         // 1. @AuthenticationPrincipal에서 얻은 정보(email)로 User 엔티티를 조회
         String email = userDetails.getUsername();
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("인증된 사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         // 2. 서비스 로직 호출
         DonationDTO.DonationResponse response =

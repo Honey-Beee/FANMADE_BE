@@ -28,6 +28,57 @@ public class AdvertisementConverter {
 
     // 광고현황 - 메인 DTO
 
+    /**
+     * 위치 정보 DTO 생성을 위한 private 헬퍼 메서드
+     * 이 메서드는 수정할 필요 없이 그대로 사용합니다. 아주 잘 작성되었습니다.
+     */
+    private static AdvertisementDTO.LocationInfo createLocationInfo(Advertisement ad) {
+        Subway subway = ad.getSubway();
+        Bus bus = ad.getBus();
+
+        if (subway != null && subway.getSubwayStation() != null) {
+            // 지하철 광고인 경우
+            AdvertisementDTO.PlacementItem.SubwayMeta subwayMeta = AdvertisementDTO.PlacementItem.SubwayMeta.builder()
+                    .lineCode(subway.getLineCode())
+                    .stationName(subway.getSubwayStation().getName())
+                    .type(subway.getType())
+                    .build();
+
+            return AdvertisementDTO.LocationInfo.builder()
+                    .grade(subway.getGrade())
+                    .subwayMeta(subwayMeta)
+                    .busMeta(null)
+                    .build();
+
+        } else if (bus != null) {
+            // 버스 광고인 경우
+            AdvertisementDTO.PlacementItem.BusMeta busMeta = AdvertisementDTO.PlacementItem.BusMeta.builder()
+                    .busType(bus.getBusType() != null ? bus.getBusType().name() : null)
+                    .faceType(bus.getFace() != null ? bus.getFace().name() : null)
+                    .route(bus.getRoute() != null ? bus.getRoute().name() : null)
+                    .busNumber(bus.getBusNumber())
+                    .build();
+
+            // --- [핵심 수정 부분] ---
+            // Bus의 Grade를 가져옵니다. (타입: com.unithon.domain.bus.domain.entity.Grade)
+            com.unithon.domain.bus.domain.entity.Grade busGrade = bus.getGrade();
+
+            // DTO가 사용하는 Subway의 Grade 타입으로 변환합니다.
+            // Enum의 이름(String)을 기준으로 변환합니다. (e.g., "SSA" -> Grade.SSA)
+            com.unithon.domain.subway.domain.entity.Grade dtoGrade =
+                    busGrade != null ? com.unithon.domain.subway.domain.entity.Grade.valueOf(busGrade.name()) : null;
+
+            return AdvertisementDTO.LocationInfo.builder()
+                    .grade(dtoGrade) // 변환된 Grade 타입을 할당합니다.
+                    .subwayMeta(null)
+                    .busMeta(busMeta)
+                    .build();
+        }
+
+        return null; // 위치 정보가 없는 경우
+    }
+
+
     public static AdvertisementDTO.MainResponse toMainResponse(
             AdvertisementDTO.SummaryInfo summaryInfo,
             List<AdvertisementDTO.AdvertisementCard> adCards,
@@ -62,17 +113,17 @@ public class AdvertisementConverter {
         }
 
         // --- [추가] 위치 정보 생성 로직 ---
-        String location = "";
-        Subway subway = ad.getSubway();
-        Bus bus = ad.getBus();
-
-        if (subway != null && subway.getSubwayStation() != null) {
-            // "신촌역" + " " + "2" + "호선" -> "신촌역 2호선"
-            location = subway.getSubwayStation().getName() + " " + subway.getLineCode() + "호선";
-        } else if (bus != null) {
-            // "N" + " 버스" -> "N 버스"
-            location = bus.getBusNumber() + " 버스";
-        }
+//        String location = "";
+//        Subway subway = ad.getSubway();
+//        Bus bus = ad.getBus();
+//
+//        if (subway != null && subway.getSubwayStation() != null) {
+//            // "신촌역" + " " + "2" + "호선" -> "신촌역 2호선"
+//            location = subway.getSubwayStation().getName() + " " + subway.getLineCode() + "호선";
+//        } else if (bus != null) {
+//            // "N" + " 버스" -> "N 버스"
+//            location = bus.getBusNumber() + " 버스";
+//        }
 
 
         return AdvertisementDTO.AdvertisementCard.builder()
@@ -83,10 +134,11 @@ public class AdvertisementConverter {
                 .title(ad.getName())
                 .progressPercentage(progressPercentage)
                 .currentAmount(ad.getCurrentAmount())
-                .donorCount(donorCount) // 계산된 값을 직접 주입
+                .donorCount(donorCount)
                 .remainingDays(remainingDays)
                 .imageUrl(ad.getImageUrl())
-                .location(location) // <-- 추가
+                // 수정된 부분: createLocationInfo 메서드를 호출하여 LocationInfo 객체를 할당합니다.
+                .location(createLocationInfo(ad))
                 .build();
     }
 
@@ -103,17 +155,17 @@ public class AdvertisementConverter {
         };
 
         // --- [추가] 위치 정보 생성 로직 ---
-        String location = "";
-        Subway subway = ad.getSubway();
-        Bus bus = ad.getBus();
-
-        if (subway != null && subway.getSubwayStation() != null) {
-            // "신촌역" + " " + "2" + "호선" -> "신촌역 2호선"
-            location = subway.getSubwayStation().getName() + " " + subway.getLineCode() + "호선";
-        } else if (bus != null) {
-            // "N" + " 버스" -> "N 버스"
-            location = bus.getBusNumber() + " 버스";
-        }
+//        String location = "";
+//        Subway subway = ad.getSubway();
+//        Bus bus = ad.getBus();
+//
+//        if (subway != null && subway.getSubwayStation() != null) {
+//            // "신촌역" + " " + "2" + "호선" -> "신촌역 2호선"
+//            location = subway.getSubwayStation().getName() + " " + subway.getLineCode() + "호선";
+//        } else if (bus != null) {
+//            // "N" + " 버스" -> "N 버스"
+//            location = bus.getBusNumber() + " 버스";
+//        }
 
         // 2. 남은 기간 계산
         long remainingDays = ChronoUnit.DAYS.between(LocalDate.now(), ad.getEndDate());
@@ -142,7 +194,8 @@ public class AdvertisementConverter {
                 .description(ad.getDescription())
                 .startDate(ad.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE)) // YYYY-MM-DD 형식
                 .endDate(ad.getEndDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
-                .location(location) // 위치 필드 추가
+                // 수정된 부분: createLocationInfo 메서드를 호출하여 LocationInfo 객체를 할당합니다.
+                .location(createLocationInfo(ad))
                 .build();
 
         AdvertisementDTO.FundingStatus fundingStatus = AdvertisementDTO.FundingStatus.builder()

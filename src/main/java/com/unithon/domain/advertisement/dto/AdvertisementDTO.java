@@ -3,6 +3,7 @@ package com.unithon.domain.advertisement.dto;
 import com.unithon.domain.advertisement.domain.entity.Advertisement;
 import com.unithon.domain.advertisement.domain.entity.MediaType;
 import com.unithon.domain.advertisement.domain.entity.Purpose;
+import com.unithon.domain.subway.domain.entity.Grade;
 import com.unithon.domain.subway.domain.entity.Type;
 import lombok.*;
 
@@ -35,6 +36,18 @@ public class AdvertisementDTO {
     }
 
     /**
+     * 최종 위치 정보 DTO (메인/상세 공통 사용)
+     * 광고의 미디어 타입에 따라 subwayMeta 또는 busMeta 중 하나만 값을 가집니다.
+     */
+    @Builder
+    @Getter
+    public static class LocationInfo {
+        private Grade grade; // 공통 필드 (Subway, Bus 엔티티에 모두 존재)
+        private PlacementItem.SubwayMeta subwayMeta; // 지하철 광고일 경우에만 값 존재
+        private PlacementItem.BusMeta busMeta;       // 버스 광고일 경우에만 값 존재
+    }
+
+    /**
      * 광고 카드 하나를 나타내는 DTO
      */
     @Builder
@@ -53,7 +66,9 @@ public class AdvertisementDTO {
         private Long donorCount;          // 참여자 수
         private Long remainingDays;       // 남은 기간
         private String imageUrl;
-        private String location;          // 버스 -> ex) N버스, (버스번호) 버스, 지하철 -> xx역 xx선
+        //private String location;          // 버스 -> ex) N버스, (버스번호) 버스, 지하철 -> xx역 xx선
+        // [수정] String 타입에서 새로 정의한 LocationInfo 타입으로 변경
+        private LocationInfo location;
     }
 
     @Builder
@@ -110,7 +125,9 @@ public class AdvertisementDTO {
         private String description;
         private String startDate;
         private String endDate;
-        private String location; // 추가
+       // private String location; // 추가
+       // [수정] String 타입에서 새로 정의한 LocationInfo 타입으로 변경
+       private LocationInfo location;
     }
 
     /**
