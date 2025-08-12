@@ -17,6 +17,8 @@ import com.unithon.domain.bus.domain.entity.Bus;
 import com.unithon.domain.subway.domain.entity.Subway;
 import com.unithon.domain.user.domain.entity.Artist;
 import com.unithon.domain.user.domain.entity.User;
+import lombok.Builder;
+import lombok.Getter;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
@@ -79,6 +81,14 @@ public class AdvertisementConverter {
     }
 
 
+//    @Builder
+//    @Getter
+//    public static class MainResponse {
+//        private AdvertisementDTO.SummaryInfo summaryInfo;
+//        private List<AdvertisementDTO.AdvertisementCard> advertisements;
+//        private AdvertisementDTO.Pagination pagination; // 페이지네이션 정보 추가
+//        private AdvertisementDTO.ArtistInfo artistInfo; // Dto 추가
+//    }
     public static AdvertisementDTO.MainResponse toMainResponse(
             AdvertisementDTO.SummaryInfo summaryInfo,
             List<AdvertisementDTO.AdvertisementCard> adCards,
@@ -133,12 +143,19 @@ public class AdvertisementConverter {
 //            location = bus.getBusNumber() + " 버스";
 //        }
 
+        // --- [핵심 수정] ArtistInfo DTO 생성 ---
+        AdvertisementDTO.ArtistInfo artistInfo = AdvertisementDTO.ArtistInfo.builder()
+                .artistId(ad.getArtistId().getId())
+                .groupName(ad.getArtistId().getGroupName())
+                .artistMemberName(ad.getArtistId().getName())
+                .profileImageUrl(ad.getArtistId().getImageUrl())
+                .build();
 
         return AdvertisementDTO.AdvertisementCard.builder()
                 .advertisementId(ad.getAdvertisementId())
                 .purpose(ad.getPurpose())
-                .groupName(ad.getArtistId().getGroupName())
-                .artistMemberName(ad.getArtistId().getName())
+             //   .groupName(ad.getArtistId().getGroupName())
+               // .artistMemberName(ad.getArtistId().getName())
                 .title(ad.getName())
                 .progressPercentage(progressPercentage)
                 .currentAmount(ad.getCurrentAmount())
@@ -148,6 +165,7 @@ public class AdvertisementConverter {
                 .imageUrl(ad.getImageUrl())
                 // 수정된 부분: createLocationInfo 메서드를 호출하여 LocationInfo 객체를 할당합니다.
                 .locationText(locationText)
+                .artistInfo(artistInfo)
                 .build();
     }
 
