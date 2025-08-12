@@ -200,7 +200,10 @@ public class AdvertisementConverter {
 
         AdvertisementDTO.ProjectInfo projectInfo = AdvertisementDTO.ProjectInfo.builder()
                 .title(ad.getName())
-                .description(ad.getDescription())
+                .descriptionKorea(ad.getDescriptionKorea())
+                .descriptionEnglish(ad.getDescriptionEnglish())
+                .descriptionChina(ad.getDescriptionChina())
+                .descriptionJapan(ad.getDescriptionJapan())
                 .startDate(ad.getStartDate().format(DateTimeFormatter.ISO_LOCAL_DATE)) // YYYY-MM-DD 형식
                 .endDate(ad.getEndDate().format(DateTimeFormatter.ISO_LOCAL_DATE))
                 // 수정된 부분: createLocationInfo 메서드를 호출하여 LocationInfo 객체를 할당합니다.
@@ -229,7 +232,6 @@ public class AdvertisementConverter {
                 .artistId(artist)
                 .user(user)
                 .name(req.getName())
-                .description(req.getDescription())
                 .status(Status.DRAFT)   // 드래프트 상태
                 .purpose(req.getPurpose())
                 .currentAmount(0)

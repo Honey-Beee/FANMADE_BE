@@ -121,7 +121,10 @@ public class AdvertisementDTO {
     @Getter
     public static class ProjectInfo {
         private String title;
-        private String description;
+        private String descriptionKorea;
+        private String descriptionEnglish;
+        private String descriptionChina;
+        private String descriptionJapan;
         private String startDate;
         private String endDate;
        // private String location; // 추가
@@ -150,7 +153,6 @@ public class AdvertisementDTO {
         private Long artistId;
         private Purpose purpose;     // BIRTHDAY/DEBUT/COMEBACK/ETC
         private String name;         // 프로젝트명(카드 타이틀)
-        private String description;
     }
 
     @Getter
@@ -333,5 +335,14 @@ public class AdvertisementDTO {
         private String status;
     }
 
-
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class DescriptionResponse {
+        private String descriptionKorea;
+        private String descriptionEnglish;
+        private String descriptionChina;
+        private String descriptionJapan;
+    }
 }
