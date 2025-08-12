@@ -69,37 +69,6 @@ public class Advertisement extends BaseEntity {
         this.currentAmount += amount;
     }
 
-    public void applyFunding(LocalDate start, LocalDate end, int goalAmount) {
-        this.startDate = start;
-        this.endDate = end;
-        this.goalAmount = goalAmount;
-    }
-
-    public void changeStatus(Status newStatus) {this.status = newStatus;}
-
     public void changeImageUrl(String url) { this.imageUrl = url; }
 
-    public void assignSubway(Subway subway) {
-        this.mediaType = MediaType.SUBWAY;
-    }
-
-    public void assignBus(Bus bus) {
-        this.mediaType = MediaType.BUS;
-    }
-
-    public void assignDescriptionKorea(String descriptionKorea) {
-        this.descriptionKorea = descriptionKorea;
-    }
-
-    public void assignDescriptionEnglish(String descriptionEnglish) {
-        this.descriptionEnglish = descriptionEnglish;
-    }
-
-    public void assignDescriptionChina(String descriptionChina) {
-        this.descriptionChina = descriptionChina;
-    }
-
-    public void assignDescriptionJapan(String descriptionJapan) {
-        this.descriptionJapan = descriptionJapan;
-    }
 }

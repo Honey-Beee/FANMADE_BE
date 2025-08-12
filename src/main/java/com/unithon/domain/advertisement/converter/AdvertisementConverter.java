@@ -245,26 +245,26 @@ public class AdvertisementConverter {
                 .build();
     }
 
-    public static Advertisement toDraftEntity(Artist artist, User user, AdvertisementDTO.CreateDraftRequest req) {
+    public static Advertisement toDraftEntity(Artist artist, User user, AdvertisementDTO.CreateAdRequest req) {
         return Advertisement.builder()
                 .artistId(artist)
                 .user(user)
                 .name(req.getName())
-                .status(Status.DRAFT)   // 드래프트 상태
+                .status(Status.FUNDING)
                 .purpose(req.getPurpose())
                 .currentAmount(0)
-                .goalAmount(0)
+                .goalAmount(req.getGoalAmount())
+                .endDate(req.getEndDate())
+                .startDate(req.getStartDate())
+                .descriptionKorea(req.getDescriptionKorea())
+                .descriptionEnglish(req.getDescriptionEnglish())
+                .descriptionChina(req.getDescriptionChina())
+                .descriptionJapan(req.getDescriptionJapan())
+                .mediaType(req.getMediaType())
                 .build();
     }
 
-    public static AdvertisementDTO.FundingInfoResponse toFundingInfoResponse(Advertisement ad) {
-        return AdvertisementDTO.FundingInfoResponse.builder()
-                .adId(ad.getAdvertisementId())
-                .startDate(ad.getStartDate())
-                .endDate(ad.getEndDate())
-                .goalAmount(ad.getGoalAmount())
-                .build();
-    }
+
 
     public static AdvertisementDTO.PlacementItem toItem(Subway s) {
         return AdvertisementDTO.PlacementItem.builder()
@@ -298,79 +298,6 @@ public class AdvertisementConverter {
                                 .busNumber(b.getBusNumber())
                                 .build()
                 )
-                .build();
-    }
-
-    public static AdvertisementDTO.ChosenPlaceResponse toChosenFromSubway(Long adId, Subway s) {
-        return AdvertisementDTO.ChosenPlaceResponse.builder()
-                .adId(adId)
-                .mediaType("SUBWAY")
-                .placeId(s.getId())
-                .build();
-    }
-
-    public static AdvertisementDTO.ChosenPlaceResponse toChosenFromBus(Long adId, Bus b) {
-        return AdvertisementDTO.ChosenPlaceResponse.builder()
-                .adId(adId)
-                .mediaType("BUS")
-                .placeId(b.getId())
-                .build();
-    }
-
-    public static AdvertisementDTO.SummaryResponse toSummaryResponse(Advertisement ad, Subway s) {
-        return AdvertisementDTO.SummaryResponse.builder()
-                .adId(ad.getAdvertisementId())
-                .artist(AdvertisementDTO.SummaryResponse.ArtistSummary.builder()
-                            .artistId(ad.getArtistId().getId())
-                            .artistName(ad.getArtistId().getName())
-                            .artistImageUrl(ad.getArtistId().getImageUrl())
-                            .artistGroupName(ad.getArtistId().getGroupName())
-                            .build())
-                .project(AdvertisementDTO.SummaryResponse.ProjectSummary.builder()
-                        .purpose(ad.getPurpose()!=null ? ad.getPurpose().name() : null)
-                        .startDate(ad.getStartDate()!=null? ad.getStartDate().toString(): null)
-                        .endDate(ad.getEndDate()!=null? ad.getEndDate().toString(): null)
-                        .goalAmount(ad.getGoalAmount())
-                        .build())
-                .mediaType("SUBWAY")
-                .subway(AdvertisementDTO.SummaryResponse.SubwaySummary.builder()
-                        .grade(s.getGrade()!=null? s.getGrade().name(): null)
-                        .type(s.getType()!=null? s.getType().name(): null)
-                        .lineCode(s.getLineCode())
-                        .stationName(s.getSubwayStation()!=null? s.getSubwayStation().getName(): null)
-                        .placement(s.getPlacement())
-                        .price(s.getPrice())
-                        .sizeWidthCm(s.getSizeWidthCm())
-                        .sizeHeightCm(s.getSizeHeightCm())
-                        .build())
-                .build();
-    }
-
-    public static AdvertisementDTO.SummaryResponse toSummaryResponse(Advertisement ad, Bus b) {
-        return AdvertisementDTO.SummaryResponse.builder()
-                .adId(ad.getAdvertisementId())
-                .artist(AdvertisementDTO.SummaryResponse.ArtistSummary.builder()
-                        .artistId(ad.getArtistId().getId())
-                        .artistName(ad.getArtistId().getName())
-                        .artistImageUrl(ad.getArtistId().getImageUrl())
-                        .build())
-                .project(AdvertisementDTO.SummaryResponse.ProjectSummary.builder()
-                        .purpose(ad.getPurpose()!=null ? ad.getPurpose().name() : null)
-                        .startDate(ad.getStartDate()!=null? ad.getStartDate().toString(): null)
-                        .endDate(ad.getEndDate()!=null? ad.getEndDate().toString(): null)
-                        .goalAmount(ad.getGoalAmount())
-                        .build())
-                .mediaType("BUS")
-                .bus(AdvertisementDTO.SummaryResponse.BusSummary.builder()
-                        .grade(b.getGrade()!=null? b.getGrade().name(): null)
-                        .busType(b.getBusType()!=null? b.getBusType().name(): null)
-                        .faceType(b.getFace()!=null? b.getFace().name(): null)
-                        .route(b.getRoute()!=null? b.getRoute().name(): null)
-                        .busNumber(b.getBusNumber())
-                        .price(b.getPrice())
-                        .sizeWidthCm(b.getSizeWidthCm())
-                        .sizeHeightCm(b.getSizeHeightCm())
-                        .build())
                 .build();
     }
 

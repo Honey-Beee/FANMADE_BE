@@ -137,50 +137,17 @@ public class AdvertisementServiceImpl implements AdvertisementService{
     }
 
     @Override
-    @Transactional
-    public Long createDraft(AdvertisementDTO.CreateDraftRequest req) {
-        Long userId = currentUserId();
-        User user = userRepository.getReferenceById(userId);
-        Artist artist = artistRepository.getReferenceById(req.getArtistId());
-
-        Advertisement ad = AdvertisementConverter.toDraftEntity(artist, user, req);
-
-        return advertisementRepository.save(ad).getAdvertisementId();
-    }
-
-    @Override
-    @Transactional
-    public AdvertisementDTO.FundingInfoResponse setFunding(Long adId
-                                                           ,AdvertisementDTO.FundingInfoRequest req) {
-        Long userId = currentUserId();
-        Advertisement ad = advertisementRepository
-                .findByAdvertisementIdAndUser_Id(adId, userId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
-
-        if (req.getGoalAmount() == null || req.getGoalAmount() < 100_000) {
-            throw new GeneralException(ErrorStatus.INVALID_FUNDING_GOAL);
-        }
-        if (req.getStartDate() == null || req.getEndDate() == null ||
-                !req.getEndDate().isAfter(req.getStartDate())) {
-            throw new GeneralException(ErrorStatus.INVALID_FUNDING_PERIOD);
-        }
-
-        ad.applyFunding(req.getStartDate(), req.getEndDate(), req.getGoalAmount());
-
-        return AdvertisementConverter.toFundingInfoResponse(ad);
-    }
-
-    @Override
     @Transactional(readOnly = true)
-    public AdvertisementDTO.PlacementListResponse filterPlacements(Long adId) {
+    public AdvertisementDTO.PlacementListResponse filterPlacements(AdvertisementDTO.filterRequest request) {
 
-        Advertisement ad = advertisementRepository.findById(adId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
-
-        long days = java.time.temporal.ChronoUnit.DAYS.between(ad.getStartDate(), ad.getEndDate()) + 1;
-        double periodRatio = days / 30.0;
-
-        int effectiveMonthlyBudget = (int) Math.round(ad.getGoalAmount() / periodRatio);
+        double periodRatio;
+        switch (request.getPeriodType()) {
+            case ONE_WEEK -> periodRatio = 0.25; // 1/4개월
+            case TWO_WEEKS -> periodRatio = 0.5; // 1/2개월
+            case FOUR_WEEKS -> periodRatio = 1.0; // 한 달
+            default -> throw new GeneralException(ErrorStatus._BAD_REQUEST);
+        }
+        int effectiveMonthlyBudget = (int) Math.round(request.getGoalAmount() / periodRatio);
 
         var top9Subway = subwayRepository.findNearestToBudget(effectiveMonthlyBudget, PageRequest.of(0, 9));
         var top9Bus    = busRepository.findNearestToBudget(effectiveMonthlyBudget, PageRequest.of(0, 9));
@@ -197,87 +164,35 @@ public class AdvertisementServiceImpl implements AdvertisementService{
 
     @Override
     @Transactional
-    public AdvertisementDTO.ChosenPlaceResponse choosePlace(Long adId, AdvertisementDTO.ChoosePlaceRequest req) {
-        Advertisement ad = advertisementRepository.findById(adId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
+    public AdvertisementDTO.CreateAdResponse submitAdvertisement(AdvertisementDTO.CreateAdRequest request) {
+        Long userId = currentUserId();
 
-        MediaType reqType = req.getMediaType();
+        User user = userRepository.getReferenceById(userId);
+        Artist artist = artistRepository.getReferenceById(request.getArtistId());
 
-        if (subwayRepository.existsByAdvertisement_AdvertisementId(adId) ||
-                busRepository.existsByAdvertisement_AdvertisementId(adId)) {
-            throw new GeneralException(ErrorStatus.AD_ALREADY_HAS_PLACE);
-        }
+        Advertisement ad = AdvertisementConverter.toDraftEntity(artist, user, request);
 
-        if ("BUS".equalsIgnoreCase(reqType.toString())) {
-            Bus b = busRepository.findByIdForUpdate(req.getPlaceId())
+        if ("BUS".equalsIgnoreCase(request.getMediaType().toString())) {
+            Bus b = busRepository.findByIdForUpdate(request.getPlaceId())
                     .orElseThrow(() -> new GeneralException(ErrorStatus.PLACE_NOT_FOUND));
             if (b.getAdvertisement() != null) throw new GeneralException(ErrorStatus.PLACE_ALREADY_ASSIGNED);
 
             b.assign(ad);
-            ad.assignBus(b);
-            return AdvertisementConverter.toChosenFromBus(adId, b);
 
-        } else if ("SUBWAY".equalsIgnoreCase(reqType.toString())) {
-            Subway s = subwayRepository.findByIdForUpdate(req.getPlaceId())
+        } else if ("SUBWAY".equalsIgnoreCase(request.getMediaType().toString())) {
+            Subway s = subwayRepository.findByIdForUpdate(request.getPlaceId())
                     .orElseThrow(() -> new GeneralException(ErrorStatus.PLACE_NOT_FOUND));
             if (s.getAdvertisement() != null) throw new GeneralException(ErrorStatus.PLACE_ALREADY_ASSIGNED);
-
             s.assign(ad);
-            ad.assignSubway(s);
-            return AdvertisementConverter.toChosenFromSubway(adId, s);
 
         } else {
             throw new GeneralException(ErrorStatus.INVALID_MEDIA_TYPE);
         }
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public AdvertisementDTO.SummaryResponse getSummary(Long adId) {
-        Advertisement ad = advertisementRepository.findById(adId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
-
-
-        Subway subway = subwayRepository.findByAdvertisementId(adId);
-        if (subway != null) {
-            return AdvertisementConverter.toSummaryResponse(ad, subway);
-        }
-
-        Bus bus = busRepository.findByAdvertisementId(adId);
-        if (bus != null) {
-            return AdvertisementConverter.toSummaryResponse(ad, bus);
-        }
-
-        throw new GeneralException(ErrorStatus.PLACE_NOT_FOUND);
-    }
-
-    @Override
-    @Transactional
-    public AdvertisementDTO.SubmitResponse submitAdvertisement(Long adId, AdvertisementDTO.DescriptionResponse response) {
-        Advertisement ad = advertisementRepository.findById(adId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
-
-        if (ad.getMediaType() == MediaType.SUBWAY) {
-            if (subwayRepository.findByAdvertisementId(adId) == null) {
-                throw new GeneralException(ErrorStatus.PLACE_NOT_FOUND);
-            }
-        } else if (ad.getMediaType() == MediaType.BUS) {
-            if (busRepository.findByAdvertisementId(adId) == null) {
-                throw new GeneralException(ErrorStatus.PLACE_NOT_FOUND);
-            }
-        }
-
-        ad.changeStatus(Status.FUNDING);
-        ad.assignDescriptionKorea(response.getDescriptionKorea());
-        ad.assignDescriptionChina(response.getDescriptionChina());
-        ad.assignDescriptionEnglish(response.getDescriptionEnglish());
-        ad.assignDescriptionJapan(response.getDescriptionJapan());
 
         advertisementRepository.save(ad);
 
-        return AdvertisementDTO.SubmitResponse.builder()
+        return AdvertisementDTO.CreateAdResponse.builder()
                 .adId(ad.getAdvertisementId())
-                .status(ad.getStatus().name())
                 .build();
     }
 

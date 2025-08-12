@@ -8,12 +8,7 @@ public interface AdvertisementService {
     public AdvertisementDTO.MainResponse getAdvertisementsMain(
             String status, String sort, int page, int size);
     AdvertisementDTO.AdvertisementDetailResponse getAdvertisementDetail(Long advertisementId);
-    Long createDraft(AdvertisementDTO.CreateDraftRequest req);
-    AdvertisementDTO.FundingInfoResponse setFunding(Long adId,
-                                                    AdvertisementDTO.FundingInfoRequest req);
-    AdvertisementDTO.PlacementListResponse filterPlacements(Long adId);
-    AdvertisementDTO.ChosenPlaceResponse choosePlace(Long adId, AdvertisementDTO.ChoosePlaceRequest req);
-    AdvertisementDTO.SummaryResponse getSummary(Long adId);
-    AdvertisementDTO.SubmitResponse submitAdvertisement(Long adId, AdvertisementDTO.DescriptionResponse response);
+    AdvertisementDTO.PlacementListResponse filterPlacements(AdvertisementDTO.filterRequest request);
+    AdvertisementDTO.CreateAdResponse submitAdvertisement(AdvertisementDTO.CreateAdRequest request);
 
 }

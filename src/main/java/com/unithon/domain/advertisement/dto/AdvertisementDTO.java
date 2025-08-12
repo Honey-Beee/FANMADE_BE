@@ -151,41 +151,44 @@ public class AdvertisementDTO {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CreateDraftRequest {
+    public static class CreateAdRequest {
         private Long artistId;
-        private Purpose purpose;     // BIRTHDAY/DEBUT/COMEBACK/ETC
-        private String name;         // 프로젝트명(카드 타이틀)
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CreateDraftResponse {
-        private Long adId;
-        private String status; // "DRAFT"
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class FundingInfoRequest {
-        private LocalDate startDate;
-        private LocalDate endDate;
-        private Integer goalAmount;  // 최소 100000 권장
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class FundingInfoResponse {
-        private Long adId;
+        private Purpose purpose;
+        private String name;
         private LocalDate startDate;
         private LocalDate endDate;
         private Integer goalAmount;
+        private MediaType mediaType;
+        private Long placeId;  //subway.id or bus.id
+        private String descriptionKorea;
+        private String descriptionEnglish;
+        private String descriptionChina;
+        private String descriptionJapan;
     }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CreateAdResponse {
+        private Long adId;
+    }
+
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class filterRequest {
+        private int goalAmount;
+        private PeriodType periodType;
+
+        public enum PeriodType {
+            ONE_WEEK,
+            TWO_WEEKS,
+            FOUR_WEEKS
+        }
+    }
+
 
     @Getter
     @Builder
@@ -242,109 +245,5 @@ public class AdvertisementDTO {
     public static class PlacementListResponse {
         private Integer budget;
         private List<PlacementItem> items;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ChoosePlaceRequest {
-        private MediaType mediaType;   // "SUBWAY" | "BUS"
-        private Long placeId;  // Subway.id or Bus.id
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ChosenPlaceResponse {
-        private Long adId;
-        private String mediaType;   // "SUBWAY" | "BUS"
-        private Long placeId;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SummaryResponse {
-        private Long adId;
-
-        private ArtistSummary artist;     // 아티스트 요약
-        private ProjectSummary project;   // 목적/기간/목표금액/실제사용예산
-        private String mediaType;         // "SUBWAY" | "BUS"
-
-        // 매체별 상세 (둘 중 하나만 채움)
-        private SubwaySummary subway;
-        private BusSummary bus;
-
-        @Getter
-        @Builder
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class ArtistSummary {
-            private Long artistId;
-            private String artistName;
-            private String artistImageUrl;
-            private String artistGroupName;
-        }
-
-        @Getter
-        @Builder
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class ProjectSummary {
-            private String purpose;       // enum name or 한글 표기
-            private String startDate;     // YYYY-MM-DD
-            private String endDate;       // YYYY-MM-DD
-            private Integer goalAmount;   // 목표금액
-        }
-
-        @Getter
-        @Builder
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class SubwaySummary {
-            private String grade;       // SSA/SA/A
-            private String type;        // A/B
-            private Integer lineCode;   // 호선
-            private String stationName; // 역명
-            private String placement;   // 배치(승강장 전광판 등)
-            private Integer price;
-            private Integer sizeWidthCm;
-            private Integer sizeHeightCm;
-        }
-
-        @Getter @Builder @NoArgsConstructor @AllArgsConstructor
-        public static class BusSummary {
-            private String grade;       // SSA/SA/A
-            private String busType;     // A형/B형/...
-            private String faceType;    // 차도면/인도면/후면/...
-            private String route;
-            private String busNumber;
-            private Integer price;
-            private Integer sizeWidthCm;
-            private Integer sizeHeightCm;
-        }
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SubmitResponse {
-        private Long adId;
-        private String status;
-    }
-
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class DescriptionResponse {
-        private String descriptionKorea;
-        private String descriptionEnglish;
-        private String descriptionChina;
-        private String descriptionJapan;
     }
 }
