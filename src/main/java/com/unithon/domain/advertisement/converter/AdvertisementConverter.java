@@ -112,6 +112,14 @@ public class AdvertisementConverter {
             progressPercentage = (int) (((double) ad.getCurrentAmount() / ad.getGoalAmount()) * 100);
         }
 
+        String locationText = "";
+        if ("SUBWAY".equalsIgnoreCase(ad.getMediaType().toString()) && ad.getSubway() != null) {
+            locationText = ad.getSubway().getLineCode() + "호선 " + ad.getSubway().getSubwayStation().getName() + "역";
+        }
+        else if ("BUS".equalsIgnoreCase(ad.getMediaType().toString()) && ad.getBus() != null) {
+            locationText = ad.getBus().getRoute() + " " + ad.getBus().getBusNumber() + " 버스";
+        }
+
         // --- [추가] 위치 정보 생성 로직 ---
 //        String location = "";
 //        Subway subway = ad.getSubway();
@@ -139,7 +147,7 @@ public class AdvertisementConverter {
                 .remainingDays(remainingDays)
                 .imageUrl(ad.getImageUrl())
                 // 수정된 부분: createLocationInfo 메서드를 호출하여 LocationInfo 객체를 할당합니다.
-                .location(createLocationInfo(ad))
+                .locationText(locationText)
                 .build();
     }
 

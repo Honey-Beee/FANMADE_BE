@@ -67,9 +67,7 @@ public class AdvertisementDTO {
         private Long donorCount;          // 참여자 수
         private Long remainingDays;       // 남은 기간
         private String imageUrl;
-        //private String location;          // 버스 -> ex) N버스, (버스번호) 버스, 지하철 -> xx역 xx선
-        // [수정] String 타입에서 새로 정의한 LocationInfo 타입으로 변경
-        private LocationInfo location;
+        private String locationText;
     }
 
     @Builder

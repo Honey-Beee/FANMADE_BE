@@ -214,6 +214,7 @@ public class AdvertisementServiceImpl implements AdvertisementService{
             if (b.getAdvertisement() != null) throw new GeneralException(ErrorStatus.PLACE_ALREADY_ASSIGNED);
 
             b.assign(ad);
+            ad.assignBus(b);
             return AdvertisementConverter.toChosenFromBus(adId, b);
 
         } else if ("SUBWAY".equalsIgnoreCase(reqType.toString())) {
@@ -222,6 +223,7 @@ public class AdvertisementServiceImpl implements AdvertisementService{
             if (s.getAdvertisement() != null) throw new GeneralException(ErrorStatus.PLACE_ALREADY_ASSIGNED);
 
             s.assign(ad);
+            ad.assignSubway(s);
             return AdvertisementConverter.toChosenFromSubway(adId, s);
 
         } else {
