@@ -39,12 +39,15 @@ public interface AdvertisementRepository extends JpaRepository<Advertisement, Lo
     // --- 요약 정보 조회를 위한 메서드 ---
     // [수정] 반환 타입을 List<Object[]> 로 변경
     // [수정] 총 모금액을 ad.currentAmount의 합으로 변경, [총광고수, 모금한사람, 총모금액]
-    @Query("SELECT COUNT(ad.advertisementId), COUNT(DISTINCT d.user.id), COALESCE(SUM(ad.currentAmount), 0) " +
+
+    @Query("SELECT COUNT(DISTINCT ad.advertisementId), COUNT(DISTINCT d.user.id), COALESCE(SUM(ad.currentAmount), 0) " +
             "FROM Advertisement ad LEFT JOIN Donation d ON d.advertisement = ad")
     List<Object[]> findSummaryInfoAll();
 
     // 2. 상태별 요약 정보
-    @Query("SELECT COUNT(ad.advertisementId), COUNT(DISTINCT d.user.id), COALESCE(SUM(ad.currentAmount), 0) " +
+
+    // [수정] COUNT(ad.advertisementId) -> COUNT(DISTINCT ad.advertisementId)
+    @Query("SELECT COUNT(DISTINCT ad.advertisementId), COUNT(DISTINCT d.user.id), COALESCE(SUM(ad.currentAmount), 0) " +
             "FROM Advertisement ad LEFT JOIN Donation d ON d.advertisement = ad WHERE ad.status = :status")
     List<Object[]> findSummaryInfoByStatus(@Param("status") Status status);
 
