@@ -74,4 +74,12 @@ public class Advertisement extends BaseEntity {
     public void changeStatus(Status newStatus) {this.status = newStatus;}
 
     public void changeImageUrl(String url) { this.imageUrl = url; }
+
+    public void assignSubway(Subway subway) {
+        this.mediaType = MediaType.SUBWAY;
+    }
+
+    public void assignBus(Bus bus) {
+        this.mediaType = MediaType.BUS;
+    }
 }
