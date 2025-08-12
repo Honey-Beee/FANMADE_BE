@@ -13,6 +13,7 @@ public class ArtistConverter {
                 .artistId(artist.getId())
                 .name(artist.getName())
                 .imageUrl(artist.getImageUrl())
+                .groupName(artist.getGroupName())
                 .build();
     }
 
@@ -28,6 +29,7 @@ public class ArtistConverter {
                 .artistId(artist.getId())
                 .name(artist.getName())
                 .imageUrl(artist.getImageUrl())
+                .groupName(artist.getGroupName())
                 .build();
     }
 

@@ -14,6 +14,6 @@ public interface AdvertisementService {
     AdvertisementDTO.PlacementListResponse filterPlacements(Long adId);
     AdvertisementDTO.ChosenPlaceResponse choosePlace(Long adId, AdvertisementDTO.ChoosePlaceRequest req);
     AdvertisementDTO.SummaryResponse getSummary(Long adId);
-    AdvertisementDTO.SubmitResponse submitAdvertisement(Long adId);
+    AdvertisementDTO.SubmitResponse submitAdvertisement(Long adId, AdvertisementDTO.DescriptionResponse response);
 
 }

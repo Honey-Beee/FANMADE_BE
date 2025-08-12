@@ -1,5 +1,6 @@
 package com.unithon.domain.advertisement.domain.entity;
 
+import com.unithon.domain.advertisement.dto.AdvertisementDTO;
 import com.unithon.domain.bus.domain.entity.Bus;
 import com.unithon.domain.model.BaseEntity;
 import com.unithon.domain.subway.domain.entity.Subway;
@@ -31,7 +32,10 @@ public class Advertisement extends BaseEntity {
     private User user;
 
     private String name;
-    private String description;
+    private String descriptionKorea;
+    private String descriptionEnglish;
+    private String descriptionChina;
+    private String descriptionJapan;
     private String imageUrl;
 
     private LocalDate startDate;
@@ -81,5 +85,21 @@ public class Advertisement extends BaseEntity {
 
     public void assignBus(Bus bus) {
         this.mediaType = MediaType.BUS;
+    }
+
+    public void assignDescriptionKorea(String descriptionKorea) {
+        this.descriptionKorea = descriptionKorea;
+    }
+
+    public void assignDescriptionEnglish(String descriptionEnglish) {
+        this.descriptionEnglish = descriptionEnglish;
+    }
+
+    public void assignDescriptionChina(String descriptionChina) {
+        this.descriptionChina = descriptionChina;
+    }
+
+    public void assignDescriptionJapan(String descriptionJapan) {
+        this.descriptionJapan = descriptionJapan;
     }
 }

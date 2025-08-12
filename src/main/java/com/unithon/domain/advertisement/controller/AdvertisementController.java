@@ -9,6 +9,7 @@ import com.unithon.global.common.BaseResponse;
 import com.unithon.global.error.code.status.SuccessStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.internal.constraintvalidators.bv.number.bound.decimal.AbstractDecimalMaxValidator;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -101,9 +102,10 @@ public class AdvertisementController {
 
     @PostMapping("/{advertisementId}/submit")
     public BaseResponse<AdvertisementDTO.SubmitResponse> submitAdvertisement(
-            @PathVariable Long advertisementId
+            @PathVariable Long advertisementId,
+            @RequestBody AdvertisementDTO.DescriptionResponse response
     ) {
-        AdvertisementDTO.SubmitResponse res = advertisementService.submitAdvertisement(advertisementId);
+        AdvertisementDTO.SubmitResponse res = advertisementService.submitAdvertisement(advertisementId, response);
         return BaseResponse.onSuccess(SuccessStatus.ADVERTISEMENT_SUBMITTED, res);
     }
 

@@ -18,6 +18,7 @@ public class ArtistDTO {
         private Long artistId;
         private String name;
         private String imageUrl;
+        private String groupName;
     }
 
     @Getter
@@ -27,5 +28,6 @@ public class ArtistDTO {
         private Long artistId;
         private String name;
         private String imageUrl;
+        private String groupName;
     }
 }

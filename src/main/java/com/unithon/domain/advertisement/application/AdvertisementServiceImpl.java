@@ -253,7 +253,7 @@ public class AdvertisementServiceImpl implements AdvertisementService{
 
     @Override
     @Transactional
-    public AdvertisementDTO.SubmitResponse submitAdvertisement(Long adId) {
+    public AdvertisementDTO.SubmitResponse submitAdvertisement(Long adId, AdvertisementDTO.DescriptionResponse response) {
         Advertisement ad = advertisementRepository.findById(adId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
 
@@ -268,6 +268,11 @@ public class AdvertisementServiceImpl implements AdvertisementService{
         }
 
         ad.changeStatus(Status.FUNDING);
+        ad.assignDescriptionKorea(response.getDescriptionKorea());
+        ad.assignDescriptionChina(response.getDescriptionChina());
+        ad.assignDescriptionEnglish(response.getDescriptionEnglish());
+        ad.assignDescriptionJapan(response.getDescriptionJapan());
+
         advertisementRepository.save(ad);
 
         return AdvertisementDTO.SubmitResponse.builder()
