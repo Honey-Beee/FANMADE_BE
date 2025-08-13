@@ -46,16 +46,9 @@ public class S3Service {
     }
 
     @Transactional
-    public FileDTO.UploadResponse uploadAndSave(Long adId, MultipartFile file) throws IOException {
+    public FileDTO.UploadResponse uploadAndSave(MultipartFile file) throws IOException {
 
         String imageUrl = uploadImage(file);
-
-        Advertisement ad = advertisementRepository.findById(adId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.AD_NOT_FOUND));
-
-
-        ad.changeImageUrl(imageUrl);
-
 
         return new FileDTO.UploadResponse(imageUrl, file.getOriginalFilename(), file.getSize());
     }

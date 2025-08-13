@@ -164,6 +164,7 @@ public class AdvertisementDTO {
         private String descriptionEnglish;
         private String descriptionChina;
         private String descriptionJapan;
+        private String imageUrl;
     }
 
     @Getter

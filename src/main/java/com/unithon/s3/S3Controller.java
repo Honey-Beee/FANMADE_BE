@@ -21,13 +21,12 @@ public class S3Controller {
 
     private final S3Service s3Service;
 
-    @PostMapping(value = "/ads/{adId}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/ads/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BaseResponse<FileDTO.UploadResponse> uploadAdImage(
-            @PathVariable Long adId,
             @RequestParam("file") MultipartFile file
     ) throws IOException {
 
-        FileDTO.UploadResponse body = s3Service.uploadAndSave(adId, file);
+        FileDTO.UploadResponse body = s3Service.uploadAndSave(file);
 
         return BaseResponse.onSuccess(SuccessStatus.FILE_UPLOAD_SUCCESS, body);
     }

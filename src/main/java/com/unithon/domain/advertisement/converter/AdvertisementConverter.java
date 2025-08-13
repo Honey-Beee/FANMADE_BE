@@ -261,6 +261,7 @@ public class AdvertisementConverter {
                 .descriptionChina(req.getDescriptionChina())
                 .descriptionJapan(req.getDescriptionJapan())
                 .mediaType(req.getMediaType())
+                .imageUrl(req.getImageUrl())
                 .build();
     }
 
